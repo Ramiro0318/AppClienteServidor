@@ -1,5 +1,6 @@
 <Solution>
   <Project Path="Cliente/Servidor.csproj" />
   <Project Path="ClienteEjemplo/ClienteEjemplo.csproj" Id="6266a0f9-8250-462e-bf86-9ffa7b9f9a54" />
+  <Project Path="PapaCalienteClienteUDP/PapaCalienteClienteUDP.csproj" Id="8638520f-23fb-4f49-8bd9-0f702cc78c52" />
   <Project Path="PapaCalienteServidorUDP/PapaCalienteServidorUDP.csproj" Id="eec28a7d-630d-4aec-b7bf-8f76e60d23ce" />
 </Solution>
