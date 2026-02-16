@@ -42,6 +42,7 @@
             btnAbrir.TabIndex = 0;
             btnAbrir.Text = "Abrir Sala";
             btnAbrir.UseVisualStyleBackColor = true;
+            btnAbrir.Click += btnAbrir_Click;
             // 
             // btnComenzar
             // 
@@ -72,7 +73,8 @@
             Controls.Add(btnComenzar);
             Controls.Add(btnAbrir);
             Name = "Form1";
-            Text = "Form1";
+            Text = "Papa Caliente";
+            Load += Form1_Load;
             ResumeLayout(false);
         }
 

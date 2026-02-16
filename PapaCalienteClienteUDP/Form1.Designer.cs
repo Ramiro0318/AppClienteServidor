@@ -28,12 +28,46 @@
         /// </summary>
         private void InitializeComponent()
         {
-            components = new System.ComponentModel.Container();
+            label1 = new Label();
+            lstUsuarios = new ListBox();
+            SuspendLayout();
+            // 
+            // label1
+            // 
+            label1.AutoSize = true;
+            label1.Font = new Font("Segoe UI", 24F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            label1.Location = new Point(83, 43);
+            label1.Name = "label1";
+            label1.Size = new Size(572, 54);
+            label1.TabIndex = 0;
+            label1.Text = "Esperando que inicie el juego...";
+            // 
+            // lstUsuarios
+            // 
+            lstUsuarios.Font = new Font("Segoe UI", 19.8000011F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            lstUsuarios.FormattingEnabled = true;
+            lstUsuarios.Location = new Point(34, 119);
+            lstUsuarios.Name = "lstUsuarios";
+            lstUsuarios.Size = new Size(729, 274);
+            lstUsuarios.TabIndex = 1;
+            // 
+            // Form1
+            // 
+            AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(800, 450);
-            Text = "Form1";
+            Controls.Add(lstUsuarios);
+            Controls.Add(label1);
+            Name = "Form1";
+            Text = "Papa Caliente";
+            Load += Form1_Load;
+            ResumeLayout(false);
+            PerformLayout();
         }
 
         #endregion
+
+        private Label label1;
+        private ListBox lstUsuarios;
     }
 }
