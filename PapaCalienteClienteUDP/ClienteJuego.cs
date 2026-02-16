@@ -24,6 +24,10 @@ namespace PapaCalienteClienteUDP
             byte[] buffer = Encoding.UTF8.GetBytes(comando);
 
             Cliente.Send(buffer, buffer.Length, remoto);
+
+            Thread hilo = new(RecibirComandos);
+            hilo.IsBackground = true;
+            hilo.Start();
         }
 
         public event Action<string[]>? UsuariosRecibidos;

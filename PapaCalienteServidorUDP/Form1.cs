@@ -31,7 +31,10 @@ namespace PapaCalienteServidorUDP
 
         private void Servidor_JugadorAceptado(JugadorInfo obj)
         {
+            //Cross thread calls
+
             lstJugadores.Items.Add(obj.Usuario);
+
         }
     }
 }

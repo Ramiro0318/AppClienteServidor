@@ -24,7 +24,9 @@ namespace PapaCalienteServidorUDP
                 IPEndPoint ServerEndpoint = new(IPAddress.Any, puerto);
                 Server = new(ServerEndpoint);
                 abierto = true;
-                RecibirMensajes();
+                Thread hilo = new(RecibirMensajes);
+                hilo.IsBackground = true;
+                hilo.Start();
             }
         }
 
