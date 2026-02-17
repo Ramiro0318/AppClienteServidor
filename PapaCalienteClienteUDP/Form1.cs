@@ -19,11 +19,14 @@ namespace PapaCalienteClienteUDP
 
         private void Cliente_UsuariosRecibidos(string[] obj)
         {
-            lstUsuarios.Items.Clear();
-            foreach (var u in obj)
+            BeginInvoke(() =>
             {
-                lstUsuarios.Items.Add(u);
-            }
+                lstUsuarios.Items.Clear();
+                foreach (var u in obj)
+                {
+                    lstUsuarios.Items.Add(u);
+                }
+            });
         }
     }
 }

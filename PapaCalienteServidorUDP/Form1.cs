@@ -33,7 +33,10 @@ namespace PapaCalienteServidorUDP
         {
             //Cross thread calls
 
-            lstJugadores.Items.Add(obj.Usuario);
+            BeginInvoke(() =>
+            {
+                lstJugadores.Items.Add(obj.Usuario);
+            });
 
         }
     }

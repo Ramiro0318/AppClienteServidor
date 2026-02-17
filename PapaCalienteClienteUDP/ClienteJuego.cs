@@ -9,6 +9,7 @@ namespace PapaCalienteClienteUDP
     public class ClienteJuego
     {
         public string? Nick { get; set; }
+        public IPAddress IpServidor { get; set; }
         UdpClient Cliente = new();
         int puertoServer = 15000;
         bool explotó = false;
@@ -25,9 +26,23 @@ namespace PapaCalienteClienteUDP
 
             Cliente.Send(buffer, buffer.Length, remoto);
 
+            //Guardar los datos de quien me conecté para mandarle mensajes despues
+            IpServidor = remoto.Address;
+            //Guardar quien soy
+            Nick = usuario;
+
             Thread hilo = new(RecibirComandos);
             hilo.IsBackground = true;
             hilo.Start();
+        }
+
+        public void Combinacion(string xyz) 
+        {
+            var comando = $"COMBINACION|{xyz}";
+            IPEndPoint remoto = new IPEndPoint(IpServidor, puertoServer);
+
+            byte[] buffer= Encoding.UTF8.GetBytes(comando);
+            Cliente.Send(buffer, buffer.Length, remoto);
         }
 
         public event Action<string[]>? UsuariosRecibidos;
