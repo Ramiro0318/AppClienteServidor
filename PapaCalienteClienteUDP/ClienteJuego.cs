@@ -46,6 +46,8 @@ namespace PapaCalienteClienteUDP
         }
 
         public event Action<string[]>? UsuariosRecibidos;
+        public event Action<string>? JugadorExploto;
+        public event Action<string, string, int>? PapaEnviada;
         public void RecibirComandos()
         {
             while (!explotó)
@@ -62,7 +64,16 @@ namespace PapaCalienteClienteUDP
                     var usuarios = comandoSeparado[1].Split(",");
                     UsuariosRecibidos?.Invoke(usuarios);
                 }
-
+                if (comandoSeparado[0] == "Tiene_PAPA")
+                {
+                    int.TryParse(comandoSeparado[3], out int tiempo);
+                    PapaEnviada?.Invoke(comandoSeparado[1], comandoSeparado[2],tiempo);
+                }
+                if (comandoSeparado[0] == "EXPLOTA")
+                {
+                    JugadorExploto?.Invoke(comandoSeparado[0]);
+                    explotó = true;
+                }
             }
 
         }
