@@ -14,5 +14,16 @@ namespace PapaCalienteClienteUDP
         {
             InitializeComponent();
         }
+
+        public void EstablecerTimerGlobal(int tiempo)
+        {
+            timer1.Stop();
+            pgbGlobal.Maximum = tiempo;
+        }
+
+        private void timer1_Tick(object sender, EventArgs e)
+        {
+
+        }
     }
 }

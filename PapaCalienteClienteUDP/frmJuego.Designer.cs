@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmJuego));
             pgbGlobal = new ProgressBar();
             pgbLocal = new ProgressBar();
@@ -38,6 +39,7 @@
             label3 = new Label();
             lblCombinacion = new Label();
             lblTienesPapa = new Label();
+            timer1 = new System.Windows.Forms.Timer(components);
             ((System.ComponentModel.ISupportInitialize)imgPapa).BeginInit();
             SuspendLayout();
             // 
@@ -128,6 +130,10 @@
             lblTienesPapa.TabIndex = 9;
             lblTienesPapa.Text = "Tienes la papa";
             // 
+            // timer1
+            // 
+            timer1.Tick += timer1_Tick;
+            // 
             // frmJuego
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
@@ -160,5 +166,6 @@
         private Label label3;
         private Label lblCombinacion;
         private Label lblTienesPapa;
+        private System.Windows.Forms.Timer timer1;
     }
 }
