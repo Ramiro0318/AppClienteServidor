@@ -26,6 +26,12 @@ namespace PapaCalienteClienteUDP
                 this.Hide();
                 formjuego.ShowDialog();
             }
+
+            formjuego.EstablecerTimerGlobal(tiempo);
+            if (quien.StartsWith(cliente.Nick ?? "----"))
+            {
+                //No soy yo
+            }
         }
 
         private void Cliente_UsuariosRecibidos(string[] obj)
