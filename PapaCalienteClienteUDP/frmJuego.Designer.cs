@@ -40,6 +40,8 @@
             lblCombinacion = new Label();
             lblTienesPapa = new Label();
             timer1 = new System.Windows.Forms.Timer(components);
+            timer2 = new System.Windows.Forms.Timer(components);
+            lblBoom = new Label();
             ((System.ComponentModel.ISupportInitialize)imgPapa).BeginInit();
             SuspendLayout();
             // 
@@ -88,6 +90,7 @@
             btnDesactivar.TabIndex = 5;
             btnDesactivar.Text = "Desactivar";
             btnDesactivar.UseVisualStyleBackColor = true;
+            btnDesactivar.Click += btnDesactivar_Click;
             // 
             // txtCombinacion
             // 
@@ -134,11 +137,28 @@
             // 
             timer1.Tick += timer1_Tick;
             // 
+            // timer2
+            // 
+            timer2.Tick += timer2_Tick;
+            // 
+            // lblBoom
+            // 
+            lblBoom.AutoSize = true;
+            lblBoom.BackColor = Color.Black;
+            lblBoom.Font = new Font("Segoe UI", 36F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            lblBoom.ForeColor = Color.Red;
+            lblBoom.Location = new Point(318, 327);
+            lblBoom.Name = "lblBoom";
+            lblBoom.Size = new Size(460, 81);
+            lblBoom.TabIndex = 10;
+            lblBoom.Text = "BOOOOOOM!!!";
+            // 
             // frmJuego
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(800, 450);
+            Controls.Add(lblBoom);
             Controls.Add(lblTienesPapa);
             Controls.Add(lblCombinacion);
             Controls.Add(label3);
@@ -167,5 +187,7 @@
         private Label lblCombinacion;
         private Label lblTienesPapa;
         private System.Windows.Forms.Timer timer1;
+        private System.Windows.Forms.Timer timer2;
+        private Label lblBoom;
     }
 }

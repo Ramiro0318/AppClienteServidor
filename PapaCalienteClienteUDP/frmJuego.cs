@@ -16,16 +16,19 @@ namespace PapaCalienteClienteUDP
             InitializeComponent();
         }
 
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public ClienteJuego? Cliente { set; get; }
         int? tiempoLocal;
 
-        public void MostrarJugadorPapa(string quien) 
+        public void MostrarJugadorPapa(string quien)
         {
-            pgbGlobal.Visible = false;
+            pgbLocal.Visible = false;
             lblCombinacion.Visible = false;
             btnDesactivar.Visible = false;
             txtCombinacion.Visible = false;
             txtCombinacion.Visible = false;
             lblTienesPapa.Visible = false;
+            lblBoom.Visible = false;
             lblTienesPapa.Text = quien + "Tiene la papa";
         }
 
@@ -40,6 +43,24 @@ namespace PapaCalienteClienteUDP
             lblTienesPapa.Text = "Tienes la papa";
             txtCombinacion.Clear();
             txtCombinacion.Focus();
+
+            pgbLocal.Maximum = 10;
+            pgbLocal.Value = 10;
+            timer2.Start();
+        }
+
+        public void Exploto()
+        {
+            lblBoom.Visible = true;
+            lblTienesPapa.Text = "💥💣 ¡¡¡ Explotaste !!! 💣💥";
+            timer1.Stop();
+        }
+
+        public void Exploto(string quien)
+        {
+            lblBoom.Visible = true;
+            lblTienesPapa.Text = $"💥💣 ¡¡¡ {quien} HA EXPLOTADO !!! 💣💥";
+            timer1.Stop();
         }
         public void EstablecerTimerGlobal(int tiempo)
         {
@@ -66,6 +87,29 @@ namespace PapaCalienteClienteUDP
             else
             {
                 timer1.Stop();
+            }
+        }
+
+        private void timer2_Tick(object sender, EventArgs e)
+        {
+            if (pgbLocal.Value > 0)
+            {
+                pgbLocal.Value--;
+            }
+            else
+            {
+                timer2.Stop();
+            }
+        }
+
+        private void btnDesactivar_Click(object sender, EventArgs e)
+        {
+            if (txtCombinacion.Text.Length == 5)
+            {
+                txtCombinacion.Visible = false;
+                //Mandar al servidor
+                Cliente?.Combinacion(txtCombinacion.Text);
+                
             }
         }
     }

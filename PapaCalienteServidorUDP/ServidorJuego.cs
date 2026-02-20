@@ -4,6 +4,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
+using System.Timers;
 
 namespace PapaCalienteServidorUDP
 {
@@ -14,6 +15,8 @@ namespace PapaCalienteServidorUDP
         int puerto = 15000;
         bool abierto = false;
         bool explotó = false;
+        int tiempoGlobar, tiempoLocal;
+        string combinacion;
         public UdpClient Server { get; set; }
 
 
@@ -28,6 +31,19 @@ namespace PapaCalienteServidorUDP
                 hilo.IsBackground = true;
                 hilo.Start();
             }
+        }
+
+        Random r = new();
+        System.Windows.Forms.Timer timerGlobal;
+        public void IniciarJuego() 
+        {
+            abierto=false;
+            tiempoGlobar = r.Next(60, 121); // Entre 1 y 2 minutos
+
+            tiempoGlobar = new System.Windows.Forms.Timer();
+
+            timerGlobal.Interval = 1000;
+
         }
 
         public event Action<JugadorInfo>? JugadorAceptado;
