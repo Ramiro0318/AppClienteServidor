@@ -39,5 +39,10 @@ namespace PapaCalienteServidorUDP
             });
 
         }
+
+        private void btnComenzar_Click(object sender, EventArgs e)
+        {
+            servidor.IniciarJuego();
+        }
     }
 }

@@ -35,14 +35,83 @@ namespace PapaCalienteServidorUDP
 
         Random r = new();
         System.Windows.Forms.Timer timerGlobal;
-        public void IniciarJuego() 
+        System.Windows.Forms.Timer timerLocal;
+        public void IniciarJuego()
         {
-            abierto=false;
+            abierto = false;
             tiempoGlobar = r.Next(60, 121); // Entre 1 y 2 minutos
 
-            tiempoGlobar = new System.Windows.Forms.Timer();
-
+            tiempoGlobar = new();
             timerGlobal.Interval = 1000;
+            timerGlobal.Tick += TimerGlobal_Tick;
+            timerGlobal.Start();
+
+        }
+
+        private void TimerGlobal_Tick(object? sender, EventArgs e)
+        {
+
+        }
+
+        JugadorInfo? jugadorConPapa;
+        public void EnviarPapa()
+        {
+            //Seleccionar un jugador con papa
+            var jugador = Jugadores.Where(x => x.TienePapa == false).OrderBy(x => r.Next()).FirstOrDefault();
+
+            if (jugadorConPapa != null)
+            {
+                jugadorConPapa.TienePapa = false;
+
+            }
+            if (jugador != null)
+            {
+                jugador?.TienePapa = true;
+                jugadorConPapa = jugador;
+
+            }
+            //Eviar una combinacion de 5 letras
+
+
+            combinacion = string.Concat(Enumerable.Range(0, 5).Select(x => (char)r.Next('A', 'Z' + 1)));
+
+            //Enviar un comando a todos con la combinacion
+            EnviarComando("Tiene_PAPA", jugadorConPapa.Usuario, combinacion);
+
+            //Timer local
+            if (timerLocal == null)
+            {
+                timerLocal = new();
+                timerLocal.Tick += TimerLocal_Tick;
+            }
+            timerLocal.Interval = 1000;
+            timerLocal.Start();
+
+        }
+
+        private void TimerLocal_Tick(object? sender, EventArgs e)
+        {
+            if (tiempoLocal > 0)
+            {
+                tiempoGlobar--;
+            }
+            else
+            {
+                timerLocal?.Stop();
+                ExplotarBomba();
+            }
+        }
+
+        private void ExplotarBomba()
+        {
+            timerGlobal.Stop();
+            timerLocal?.Stop();
+
+            if (jugadorConPapa != null)
+            {
+                explotó = true;
+                EnviarComando("EXPLOTO", jugadorConPapa.Usuario);
+            }
 
         }
 
@@ -78,6 +147,20 @@ namespace PapaCalienteServidorUDP
                     //Enviara comando Bienvenido a los clientes
                     var jugadores = string.Join(",", Jugadores.Select(x => x.Usuario));
                     EnviarComando("BIENVENIDO", jugadores);
+                }
+                if (comandoSeparado[0] == "COMBINACION" && abierto && comandoSeparado.Length == 2)
+                {
+                    var combinacionUsuario = comandoSeparado[1];
+                    if (combinacion == combinacionUsuario)
+                    {
+                        timerLocal?.Stop();
+                        EnviarPapa();
+                    }
+                    else
+                    {
+                        ExplotarBomba();
+                        break;
+                    }
                 }
 
             }

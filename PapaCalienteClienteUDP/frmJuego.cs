@@ -78,6 +78,8 @@ namespace PapaCalienteClienteUDP
             pgbGlobal.Maximum = tiempo;
         }
 
+        
+
         private void timer1_Tick(object sender, EventArgs e)
         {
             if (pgbGlobal.Value > 0)

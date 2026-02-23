@@ -25,12 +25,16 @@ namespace PapaCalienteClienteUDP
 
         private void Cliente_JugadorExploto(string quien)
         {
-            BeginInvoke(() => 
+            BeginInvoke(() =>
             {
-                lstUsuarios.Items.Clear();
-                foreach (var item in collection)
+                if (!quien.StartsWith(cliente.Nick ?? "---"))
                 {
-
+                    //No soy yo
+                    formjuego.Exploto(quien);
+                }
+                else
+                {
+                    formjuego.Exploto();
                 }
             });
         }

@@ -54,6 +54,7 @@
             btnComenzar.TabIndex = 1;
             btnComenzar.Text = "Comenzar ronda";
             btnComenzar.UseVisualStyleBackColor = true;
+            btnComenzar.Click += btnComenzar_Click;
             // 
             // lstJugadores
             // 
