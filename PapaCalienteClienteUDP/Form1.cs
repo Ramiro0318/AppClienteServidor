@@ -48,7 +48,7 @@ namespace PapaCalienteClienteUDP
                 if (!formjuego.Visible)
                 {
                     this.Hide();
-                    formjuego.ShowDialog();
+                    formjuego.Show();
                 }
 
                 formjuego.EstablecerTimerGlobal(tiempo);

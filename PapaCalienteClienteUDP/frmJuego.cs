@@ -26,7 +26,6 @@ namespace PapaCalienteClienteUDP
             lblCombinacion.Visible = false;
             btnDesactivar.Visible = false;
             txtCombinacion.Visible = false;
-            txtCombinacion.Visible = false;
             lblTienesPapa.Visible = false;
             lblBoom.Visible = false;
             lblTienesPapa.Text = quien + "Tiene la papa";
@@ -37,7 +36,6 @@ namespace PapaCalienteClienteUDP
             pgbGlobal.Visible = true;
             lblCombinacion.Visible = true;
             btnDesactivar.Visible = true;
-            txtCombinacion.Visible = true;
             txtCombinacion.Visible = true;
             lblTienesPapa.Visible = true;
             lblTienesPapa.Text = "Tienes la papa";

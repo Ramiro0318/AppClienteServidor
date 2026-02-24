@@ -41,16 +41,26 @@ namespace PapaCalienteServidorUDP
             abierto = false;
             tiempoGlobar = r.Next(60, 121); // Entre 1 y 2 minutos
 
-            tiempoGlobar = new();
+            timerGlobal = new System.Windows.Forms.Timer();
             timerGlobal.Interval = 1000;
             timerGlobal.Tick += TimerGlobal_Tick;
+
             timerGlobal.Start();
+            EnviarPapa();
 
         }
 
         private void TimerGlobal_Tick(object? sender, EventArgs e)
         {
-
+            if (tiempoLocal > 0)
+            {
+                tiempoGlobar--;
+            }
+            else
+            {
+                timerLocal?.Stop();
+                ExplotarBomba();
+            }
         }
 
         JugadorInfo? jugadorConPapa;
@@ -76,7 +86,7 @@ namespace PapaCalienteServidorUDP
             combinacion = string.Concat(Enumerable.Range(0, 5).Select(x => (char)r.Next('A', 'Z' + 1)));
 
             //Enviar un comando a todos con la combinacion
-            EnviarComando("Tiene_PAPA", jugadorConPapa.Usuario, combinacion);
+            EnviarComando("Tiene_PAPA", jugadorConPapa.Usuario, combinacion, tiempoGlobar.ToString());
 
             //Timer local
             if (timerLocal == null)
@@ -110,7 +120,7 @@ namespace PapaCalienteServidorUDP
             if (jugadorConPapa != null)
             {
                 explotó = true;
-                EnviarComando("EXPLOTO", jugadorConPapa.Usuario);
+                EnviarComando("EXPLOTA", jugadorConPapa.Usuario);
             }
 
         }
@@ -148,7 +158,7 @@ namespace PapaCalienteServidorUDP
                     var jugadores = string.Join(",", Jugadores.Select(x => x.Usuario));
                     EnviarComando("BIENVENIDO", jugadores);
                 }
-                if (comandoSeparado[0] == "COMBINACION" && abierto && comandoSeparado.Length == 2)
+                if (comandoSeparado[0] == "COMBINACION" && !abierto && comandoSeparado.Length == 2)
                 {
                     var combinacionUsuario = comandoSeparado[1];
                     if (combinacion == combinacionUsuario)
