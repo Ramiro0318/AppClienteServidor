@@ -1,4 +1,10 @@
 <Solution>
+  <Folder Name="/Unidad1/" />
+  <Folder Name="/Unidad1/TCP/">
+    <Project Path="TCPClient/TCPClient.csproj" Id="ac63ee70-d17d-4ed8-945a-fc3a0be79b08" />
+    <Project Path="TCPServer/TCPServer.csproj" Id="81d18b8f-820a-48f7-be98-84d7143a15b8" />
+  </Folder>
+  <Folder Name="/Unidad1/UDP/" />
   <Project Path="Cliente/Servidor.csproj" />
   <Project Path="ClienteEjemplo/ClienteEjemplo.csproj" Id="6266a0f9-8250-462e-bf86-9ffa7b9f9a54" />
   <Project Path="PapaCalienteClienteUDP/PapaCalienteClienteUDP.csproj" Id="8638520f-23fb-4f49-8bd9-0f702cc78c52" />
