@@ -38,10 +38,32 @@ void EscucharCliente(object? c)
                 stream.ReadExactly(buffer, 0, buffer.Length);
                 var mensaje = Encoding.UTF8.GetString(buffer);
                 Console.WriteLine(tcpClient.Client.RemoteEndPoint + "Dice esto: " + mensaje);
+                Relay(tcpClient, buffer);
             }
+
             Thread.Sleep(100);
         }
         Clients.Remove(tcpClient);
+
+    }
+
+    void Relay(TcpClient origen, byte[] mensaje)
+    {
+        foreach (var cliente in Clients)
+        {
+            try
+            {
+                if (cliente != origen && cliente.Connected)
+                {
+                    var stream = cliente.GetStream();
+                    stream.Write(mensaje, 0, mensaje.Length);
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+        }
 
     }
 }
