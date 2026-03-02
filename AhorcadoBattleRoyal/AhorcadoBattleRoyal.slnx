@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="AhorcadoCliente/AhorcadoCliente.csproj" />
+  <Project Path="AhorcadoServer/AhorcadoServer.csproj" />
+</Solution>

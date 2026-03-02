@@ -1,6 +1,8 @@
 <Solution>
   <Folder Name="/Unidad1/" />
   <Folder Name="/Unidad1/TCP/">
+    <Project Path="AhorcadoBattleRoyal/AhorcadoCliente/AhorcadoCliente.csproj" />
+    <Project Path="AhorcadoBattleRoyal/AhorcadoServer/AhorcadoServer.csproj" />
     <Project Path="TCPClient/TCPClient.csproj" Id="ac63ee70-d17d-4ed8-945a-fc3a0be79b08" />
     <Project Path="TCPServer/TCPServer.csproj" Id="81d18b8f-820a-48f7-be98-84d7143a15b8" />
   </Folder>
