@@ -18,7 +18,7 @@ namespace AhorcadoServer.Models
         public int Errores;
         public Cliente Turno { get; set; }
         public int Ronda { get; set; }
-
+        public string Nombre { get; set; } = null!;
         public string? FraseOculta { get; set; }
         public List<string> LetrasDisponibles { get; set; }
     }

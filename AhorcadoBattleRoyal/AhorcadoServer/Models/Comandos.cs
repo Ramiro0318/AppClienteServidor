@@ -9,7 +9,7 @@ namespace AhorcadoServer.Models
     public enum Orden { Conectar, Bienvenido, Rechazar, CambiarTurno, Responder, Expulsar, Ganar, CambiarRonda }
     public class Comandos
     {
-        public string Comando { get; set; } = null!;
+        public Orden Comando { get; set; }
     }
 
     public class ConectarComand : Comandos
