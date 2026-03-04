@@ -29,7 +29,7 @@ namespace AhorcadoServer.Models
         public string? Palabra { get; set; }
         public string? JugadorTurno { get; set; } = null!;
         public int NumErrores { get; set; }
-        public List<string> LetrasDisponibles { get; set; } = [];
+        public char[] LetrasDisponibles { get; set; } = [];
     }
 
     public class ResponderComando : Comandos

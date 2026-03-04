@@ -1,6 +1,7 @@
 ﻿using AhorcadoServer.Models;
 using System;
 using System.Collections.Generic;
+using System.IO.Pipes;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
@@ -18,16 +19,16 @@ namespace AhorcadoServer.Services
 
         int puertoEscucha = 7777;
         private string? fraseAdivinar, fraseOculta;
-        public int Errores {  get; set; }
+        public int Errores { get; set; }
         public Cliente? Turno { get; set; }
         public int Ronda { get; set; }
         public string? FaseOculta { get; set; }
-        public char[]? LetrasDisponibles { get; set; }
+        public char[]? LetrasDisponibles { get; set; } = [];
 
         bool salaAbierta = false;
 
         public event Action<string>? LogEnviado;
-        public void AbrirSala() 
+        public void AbrirSala()
         {
             if (!salaAbierta)
             {
@@ -44,7 +45,7 @@ namespace AhorcadoServer.Services
             }
         }
 
-        private void RecibirClientes() 
+        private void RecibirClientes()
         {
             IPEndPoint ipServer = new(IPAddress.Any, puertoEscucha);
             Servidor = new(ipServer);
@@ -81,7 +82,7 @@ namespace AhorcadoServer.Services
                                 //Lo agrego a la lista
                                 var cliente = new Cliente
                                 {
-                                    Conexion = clienteNuevo, 
+                                    Conexion = clienteNuevo,
                                     Nombre = nombre ?? "",
                                 };
 
@@ -110,7 +111,7 @@ namespace AhorcadoServer.Services
             }
         }
 
-        public void CerrarSala() 
+        public void CerrarSala()
         {
             salaAbierta = false;
             Servidor?.Stop();
@@ -119,29 +120,115 @@ namespace AhorcadoServer.Services
             IniciarRonda("");
         }
 
-        private void IniciarRonda(string frase)
+        public void IniciarRonda(string frase)
         {
             Errores = 0;
-            fraseAdivinar = frase;
+            fraseAdivinar = frase.ToUpper();
             Ronda++;
             LetrasDisponibles = "ABCDEFGHIJKLMOPQRSTUVWXYZ".ToCharArray();
 
-            fraseOculta = string.Join(" ", frase.Select(letra => char.IsLetter(letra) ? '_' : letra));
+            fraseOculta = string.Join("", frase.Select(letra => char.IsLetter(letra) ? '_' : letra));
+
+            //Seleccionar jugador turno
+            Random r = new Random();
+            Turno = Clientes[r.Next(0, Clientes.Count)];
+
+            var comando = new TurnoComando
+            {
+                Comando = Orden.CambiarTurno,
+                JugadorTurno = Turno.Nombre,
+                LetrasDisponibles = LetrasDisponibles,
+                NumErrores = Errores,
+                Palabra = fraseOculta
+            };
+
+            EnviarTodos(comando);
 
         }
 
-        private void EscucharCliente(object? obj)
+        private void EscucharCliente(object? cliente)
         {
+            if (cliente != null)
+            {
+                TcpClient client = (TcpClient)cliente;
+
+                try
+                {
+                    while (client.Connected)
+                    {
+                        if (client.Available > 0)
+                        {
+                            var stream = client.GetStream();
+                            var buffer = new byte[client.Available];
+                            stream.ReadExactly(buffer, 0, buffer.Length);
+
+                            var json = Encoding.UTF8.GetString(buffer);
+                            var comando = JsonSerializer.Deserialize<ResponderComando>(json);
+
+                            if (comando != null)
+                            {
+                                LogEnviado?.Invoke("letra recibida" + comando.Letra);
+                                ProcesarLetra(comando.Letra);
+                            }
+
+                        }
+                        else
+                        {
+                            Thread.Sleep(100);
+                        }
+                    }
+                }
+                catch { }
+            }
+        }
+
+        private void ProcesarLetra(string? letra)
+        {
+            if (letra != null && fraseAdivinar != null)
+            {
+                LetrasDisponibles = LetrasDisponibles.Except(letra).ToArray();
+
+                if (fraseAdivinar.Contains(letra))
+                {
+                    //Acertó
+                }
+                else
+                {
+                    //Se equivocó
+                }
+                if (Errores > 6)
+                {
+
+                }
+                else
+                {
+
+                }
+            }
 
         }
 
+        private void EnviarTodos(Comandos comandos)
+        {
+            lock (Clientes)
+            {
+                foreach (var cliente in Clientes)
+                {
+                    if (cliente != null)
+                    {
+                        EnviarComando(comandos, cliente.Conexion);
 
-        private void EnviarComando(Comandos Comando, object cliente)
+                    }
+                }
+            }
+        }
+
+        private void EnviarComando(Comandos Comando, TcpClient cliente)
         {
             var stream = cliente.GetStream();
             var json = JsonSerializer.Serialize(stream);
             var buffer = Encoding.UTF8.GetBytes(json);
-            stream.write(buffer, 0 , buffer.Lenght);
+            stream.Write(buffer, 0, buffer.Length);
         }
     }
 }

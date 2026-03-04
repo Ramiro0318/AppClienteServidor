@@ -12,14 +12,8 @@ namespace AhorcadoServer.Models
         public TcpListener? Servidor;
         public List<Cliente> Clientes { get; set; } = [];
 
-        int puertoEscucha = 7777;
-
-        private string? fraseAdivinar;
-        public int Errores;
-        public Cliente Turno { get; set; }
-        public int Ronda { get; set; }
+        public TcpClient Conexion { get; set; }
         public string Nombre { get; set; } = null!;
-        public string? FraseOculta { get; set; }
-        public List<string> LetrasDisponibles { get; set; }
+        
     }
 }
