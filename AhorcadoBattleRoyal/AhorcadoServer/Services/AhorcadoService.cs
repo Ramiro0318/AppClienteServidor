@@ -28,6 +28,7 @@ namespace AhorcadoServer.Services
         bool salaAbierta = false;
 
         public event Action<string>? LogEnviado;
+        public event Action? RondaRequerida;
         public void AbrirSala()
         {
             if (!salaAbierta)
@@ -133,17 +134,19 @@ namespace AhorcadoServer.Services
             Random r = new Random();
             Turno = Clientes[r.Next(0, Clientes.Count)];
 
+        }
+
+        private void EnviarEstado()
+        {
             var comando = new TurnoComando
             {
                 Comando = Orden.CambiarTurno,
-                JugadorTurno = Turno.Nombre,
+                JugadorTurno = Turno?.Nombre,
                 LetrasDisponibles = LetrasDisponibles,
                 NumErrores = Errores,
                 Palabra = fraseOculta
             };
-
             EnviarTodos(comando);
-
         }
 
         private void EscucharCliente(object? cliente)
@@ -195,17 +198,73 @@ namespace AhorcadoServer.Services
                 else
                 {
                     //Se equivocó
-                }
-                if (Errores > 6)
-                {
+                    Errores++;
+                    LogEnviado?.Invoke("El jugador se equivocó con la letra: " + letra);
 
-                }
-                else
-                {
+                    var turno = Turno;
+                    Turno = null;
 
+                    EnviarEstado();
+                    //Pausa para observar ultima jugada
+                    Thread.Sleep(3000);
+
+                    if (Errores == 6 && turno != null)
+                    {
+                        var comando = new ExpulsarComando
+                        {
+                            Comando = Orden.Expulsar,
+                            Jugador = turno.Nombre,
+                            Palabra = fraseAdivinar
+                        };
+                        EnviarTodos(comando);
+                        LogEnviado?.Invoke($"El jugador {turno.Nombre} ha sido expulsado");
+
+                        turno.Conexion.Close();
+                        lock (Clientes)
+                        {
+                            Clientes.Remove(turno);
+                        }
+
+                        //Si solo queda un cliente este ganó
+                        if (Clientes.Count > 1)
+                        {
+                            RondaRequerida?.Invoke();
+                        }
+                        else
+                        {
+                            var clienteGanador = Clientes[0];
+                            var ganador = new GanadorComando
+                            {
+                                Comando = Orden.Ganar,
+                                Jugador = Clientes[0]?.Nombre
+                            };
+                            Clientes.Clear();
+                            clienteGanador.Conexion.Close();
+
+                        }
+
+
+                        RondaRequerida?.Invoke();
+                    }
+                    else
+                    {
+                        Turno = turno;
+                        CambiarTurno();
+                        LogEnviado?.Invoke($"El jugador {turno} tiene el turno");
+                        EnviarEstado();
+                    }
                 }
             }
 
+        }
+
+        private void CambiarTurno()
+        {
+            if (Turno != null)
+            {
+                var indice = Clientes.IndexOf(Turno);
+                Turno = indice + 1 == Clientes.Count ? Clientes[0] : Clientes[indice + 1];
+            }
         }
 
         private void EnviarTodos(Comandos comandos)
