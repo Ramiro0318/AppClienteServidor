@@ -48,5 +48,5 @@ namespace AhorcadoServer.Models
         public string? Jugador { get; set; }
     }
 
-    public class CambiarRondaComand : Comandos { }
+    public class CambiarRondaComando : Comandos { }
 }

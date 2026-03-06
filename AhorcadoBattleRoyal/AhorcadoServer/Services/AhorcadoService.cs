@@ -29,6 +29,8 @@ namespace AhorcadoServer.Services
 
         public event Action<string>? LogEnviado;
         public event Action? RondaRequerida;
+        public event Action? JuegoFinalizado;
+        public event Action<Cliente>? ClienteConectado;
         public void AbrirSala()
         {
             if (!salaAbierta)
@@ -88,6 +90,8 @@ namespace AhorcadoServer.Services
                                 };
 
                                 Clientes.Add(cliente);
+                                ClienteConectado?.Invoke(cliente);
+                                LogEnviado?.Invoke($"{cliente.Nombre} se ha conectado");
 
                                 var bienvenido = new BienvenidoComando
                                 {
@@ -136,7 +140,7 @@ namespace AhorcadoServer.Services
 
         }
 
-        private void EnviarEstado()
+        private void EnviarEstado(Cliente? cliente)
         {
             var comando = new TurnoComando
             {
@@ -193,7 +197,44 @@ namespace AhorcadoServer.Services
 
                 if (fraseAdivinar.Contains(letra))
                 {
+                    LogEnviado?.Invoke($" Jugador {Turno?.Nombre} se acertó la letra {letra}");
                     //Acertó
+                    string nuevaFraseOculta = "";
+
+                    for (int i = 0; i < fraseAdivinar.Length; i++)
+                    {
+                        if (fraseAdivinar[i] == char.Parse(letra))
+                        {
+                            nuevaFraseOculta += letra;
+                        }
+                        else
+                        {
+                            nuevaFraseOculta += fraseOculta?[i];
+                        }
+                    }
+                    fraseOculta = nuevaFraseOculta;
+
+                    EnviarEstado(null);
+
+                    Thread.Sleep(3000);
+                    if (fraseOculta == fraseAdivinar)
+                    {
+                        var CambiarRondaComando = new CambiarRondaComando
+                        {
+                            Comando = Orden.CambiarRonda,
+                        };
+
+                        EnviarTodos(CambiarRondaComando);
+                        LogEnviado?.Invoke("Se acabó la ronda, adivinaron la frase");
+
+                        RondaRequerida?.Invoke();
+                    }
+                    else
+                    {
+                        CambiarTurno();
+                        LogEnviado?.Invoke($"El jugador {Turno?.Nombre} tiene el turno");
+                        EnviarEstado(Turno);
+                    }
                 }
                 else
                 {
@@ -204,7 +245,7 @@ namespace AhorcadoServer.Services
                     var turno = Turno;
                     Turno = null;
 
-                    EnviarEstado();
+                    EnviarEstado(null);
                     //Pausa para observar ultima jugada
                     Thread.Sleep(3000);
 
@@ -251,7 +292,7 @@ namespace AhorcadoServer.Services
                         Turno = turno;
                         CambiarTurno();
                         LogEnviado?.Invoke($"El jugador {turno} tiene el turno");
-                        EnviarEstado();
+                        EnviarEstado(turno);
                     }
                 }
             }

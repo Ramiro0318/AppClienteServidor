@@ -58,7 +58,7 @@
                 <StackPanel>
                     <TextBlock Text="CONTROL DEL SERVIDOR" FontSize="12" Foreground="#7F8C8D" Margin="0,0,0,10"/>
                     <WrapPanel>
-                        <Button Content="ABRIR SALA" Style="{StaticResource ServerButton}" Background="#E67E22" Command="{Binding AbrirSalaCommand}"/>
+                        <Button Content="ABRIR SALA" Style="{StaticResource ServerButton}" Background="#E67E22" Command="{Binding AbrirSalaCommand}" IsEnabled="{Binding SalaCerrada}"/>
                         <Button Content="NUEVA RONDA" Style="{StaticResource ServerButton}" Background="#3498DB" Command="{Binding MostrarModalNuevaRondaCommand}"/>
                     </WrapPanel>
                     <TextBlock Text="Puerto: 7777" Foreground="#95A5A6" FontSize="11" Margin="0,5,0,0"/>
@@ -69,38 +69,24 @@
                 <StackPanel>
                     <TextBlock Text="JUGADORES CONECTADOS" FontSize="12" Foreground="#7F8C8D" Margin="0,0,0,10"/>
                     <ScrollViewer Height="120" VerticalScrollBarVisibility="Auto">
-                        <StackPanel>
-                            <Grid Margin="0,2">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="Auto"/>
-                                    <ColumnDefinition Width="*"/>
-                                    <ColumnDefinition Width="Auto"/>
-                                </Grid.ColumnDefinitions>
-                                <TextBlock Grid.Column="0" Text="•" Foreground="#27AE60" FontSize="16" Margin="0,0,10,0"/>
-                                <TextBlock Grid.Column="1" Text="Carlos" FontSize="13"/>
-                                <TextBlock Grid.Column="2" Text="vivo" Foreground="#7F8C8D" FontSize="11" FontStyle="Italic"/>
-                            </Grid>
-                            <Grid Margin="0,2">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="Auto"/>
-                                    <ColumnDefinition Width="*"/>
-                                    <ColumnDefinition Width="Auto"/>
-                                </Grid.ColumnDefinitions>
-                                <TextBlock Grid.Column="0" Text="•" Foreground="#27AE60" FontSize="16" Margin="0,0,10,0"/>
-                                <TextBlock Grid.Column="1" Text="Ana" FontSize="13"/>
-                                <TextBlock Grid.Column="2" Text="vivo" Foreground="#7F8C8D" FontSize="11" FontStyle="Italic"/>
-                            </Grid>
-                            <Grid Margin="0,2">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="Auto"/>
-                                    <ColumnDefinition Width="*"/>
-                                    <ColumnDefinition Width="Auto"/>
-                                </Grid.ColumnDefinitions>
-                                <TextBlock Grid.Column="0" Text="•" Foreground="#E74C3C" FontSize="16" Margin="0,0,10,0"/>
-                                <TextBlock Grid.Column="1" Text="Luis" FontSize="13"/>
-                                <TextBlock Grid.Column="2" Text="eliminado" Foreground="#7F8C8D" FontSize="11" FontStyle="Italic"/>
-                            </Grid>
-                        </StackPanel>
+                        <ItemsControl ItemsSource="{Binding Clientes}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    
+                                    <Grid Margin="0,2">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock Grid.Column="0" Text="•" Foreground="#27AE60" FontSize="16" Margin="0,0,10,0"/>
+                                        <TextBlock Grid.Column="1" Text="{Binding Nombre}" FontSize="13"/>
+                                    </Grid>
+                                    
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+
                     </ScrollViewer>
                 </StackPanel>
             </Border>
@@ -109,48 +95,21 @@
                 <StackPanel>
                     <TextBlock Text="LOG DE EVENTOS" FontSize="12" Foreground="#7F8C8D" Margin="0,0,0,10"/>
                     <ScrollViewer Height="200" VerticalScrollBarVisibility="Auto">
-                        <StackPanel>
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="70"/>
-                                    <ColumnDefinition Width="*"/>
-                                </Grid.ColumnDefinitions>
-                                <TextBlock Grid.Column="0" Text="20:15:15" FontFamily="Consolas" FontSize="12" Foreground="#7F8C8D" Margin="0,2"/>
-                                <TextBlock Grid.Column="1" Text="Servidor iniciado" FontFamily="Consolas" FontSize="12" Foreground="#2C3E50" Margin="0,2"/>
-                            </Grid>
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="70"/>
-                                    <ColumnDefinition Width="*"/>
-                                </Grid.ColumnDefinitions>
-                                <TextBlock Grid.Column="0" Text="20:15:20" FontFamily="Consolas" FontSize="12" Foreground="#7F8C8D" Margin="0,2"/>
-                                <TextBlock Grid.Column="1" Text="Carlos conectado" FontFamily="Consolas" FontSize="12" Foreground="#27AE60" Margin="0,2"/>
-                            </Grid>
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="70"/>
-                                    <ColumnDefinition Width="*"/>
-                                </Grid.ColumnDefinitions>
-                                <TextBlock Grid.Column="0" Text="20:15:22" FontFamily="Consolas" FontSize="12" Foreground="#7F8C8D" Margin="0,2"/>
-                                <TextBlock Grid.Column="1" Text="Ana conectado" FontFamily="Consolas" FontSize="12" Foreground="#27AE60" Margin="0,2"/>
-                            </Grid>
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="70"/>
-                                    <ColumnDefinition Width="*"/>
-                                </Grid.ColumnDefinitions>
-                                <TextBlock Grid.Column="0" Text="20:16:10" FontFamily="Consolas" FontSize="12" Foreground="#7F8C8D" Margin="0,2"/>
-                                <TextBlock Grid.Column="1" Text="Ana falló 'Z'" FontFamily="Consolas" FontSize="12" Foreground="#E74C3C" Margin="0,2"/>
-                            </Grid>
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="70"/>
-                                    <ColumnDefinition Width="*"/>
-                                </Grid.ColumnDefinitions>
-                                <TextBlock Grid.Column="0" Text="20:16:20" FontFamily="Consolas" FontSize="12" Foreground="#7F8C8D" Margin="0,2"/>
-                                <TextBlock Grid.Column="1" Text="Luis eliminado" FontFamily="Consolas" FontSize="12" Foreground="#C0392B" Margin="0,2"/>
-                            </Grid>
-                        </StackPanel>
+                        <ItemsControl ItemsSource="{Binding Logs}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="70"/>
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock Grid.Column="1" Text="{Binding .}" FontFamily="Consolas" FontSize="12" Foreground="#2C3E50" Margin="0,2"/>
+                                    </Grid>
+
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
                     </ScrollViewer>
                 </StackPanel>
             </Border>
