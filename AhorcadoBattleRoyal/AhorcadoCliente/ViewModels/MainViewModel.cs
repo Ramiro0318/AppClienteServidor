@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿using AhorcadoCliente.Services;
+using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows.Input;
 
@@ -15,6 +16,14 @@ namespace AhorcadoCliente.ViewModels
 
     public class MainViewModel : INotifyPropertyChanged
     {
+        ClienteService clienteService = new();
+        public ObservableCollection<string> Jugadores { get; set; } = new();
+
+        public string? Nombre { get; set; }
+        public string? DireccionIP { get; set; }
+        public string? Mensaje { get; set; }
+
+
         private TipoVista _vistaActual = TipoVista.Conexion;
 
         public TipoVista VistaActual
@@ -40,7 +49,22 @@ namespace AhorcadoCliente.ViewModels
 
         private void IrASala()
         {
-            VistaActual = TipoVista.SalaEspera;
+            Mensaje = string.Empty;
+            if (string.isNullOrWhiteSpace)
+            {
+                Mensaje = "Escribe el nombre del jugador";
+                OnPropertyChanged(nameof(Mensaje));
+                return;
+
+            }
+            if (!IPAddress.TryParse(DireccionIP, out IPAddress? ip))
+            {
+                Mensaje = "Escriba una direccion IP correcta";
+                OnPropertyChanged(nameof(Mensaje));
+                return;
+            }
+                VistaActual = TipoVista.SalaEspera;
+
         }
 
         private void IrAJuego()
