@@ -1,10 +1,13 @@
-﻿using System;
+﻿using AhorcadoCliente.Models;
+using system.Net.Sockets;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
+using System.Net.Sockets;
 using System.Text;
-using system.Net.Sockets;
+using System.Text.Json;
 using System.Threading.Tasks;
-using AhorcadoCliente.Models;
 
 namespace AhorcadoCliente.Services
 {
@@ -31,10 +34,10 @@ namespace AhorcadoCliente.Services
                     {
                         comando = Orden.Conectar,
                         nombre = NombreJugador
-                    }
-            nombre = NombreJugador;
+    }
+    nombre = NombreJugador;
             Thread hilo = new Thread(RecibirMensaje);
-        hilo.isbackground = true;
+    hilo.isbackground = true;
         hilo.Start();
             EnviarComando(conectar, clent);
 }
@@ -42,62 +45,63 @@ namespace AhorcadoCliente.Services
 
 public event Action List<string>? JugadorConectado;
 public event Action JugadorRechazado;
-        private void RecibirMensaje()
+private void RecibirMensaje()
+{
+    try
+    {
+        while (ClientConnected)
         {
-            try
+
+            if (client.Available)
             {
-                while (ClientConnected) 
+                var stream = client.GetStream();
+                var buffer = new byte[client.Available];
+                stream.ReadExactly(buffer, 0 buffer.Length);
+                var json = Encoding.UTF8.GetBytes(stream);
+
+                var comando = JsonSerializer.Deserialize<Comandos>(json);
+
+                if (comando != null)
                 {
-
-                    if (client.Available)
-                    {
-                        var stream = client.GetStream();
-                        var buffer = new byte[client.Available];
-                        stream.ReadExactly(buffer, 0 buffer.Length);
-                        var json = Encoding.UTF8.GetBytes(stream);
-
-                        var comando = JsonSerializer.Deserialize<Comandos>(json);
-
-                        if (comando != null)
-                        {
                             case Orden.Bienvenido:
                         var bienvenido = JsonSerializer<BienvenidoComando>;
                         if (bienvenido != null)
                         {
-                        JugadorConectado?.Invoke(bienvenido.Nombres)
-                            
+                            JugadorConectado?.Invoke(bienvenido.Nombres)
+
+
                         }
-                        
+
                         break;
 
-                            case Orden.Rechazar:
+                    case Orden.Rechazar:
                         client.Clear();
                         client = null;
                         JugadorRechazad.Invoke();
                         break;
 
-                            case Orden.CambiarTurno: break;
-                            case Orden.Expulsar: break;
-                            case Orden.Ganar: break;
-                            case Orden.CambiarRonda: break;
-                            default: break;
-                        }
+                    case Orden.CambiarTurno: break;
+                    case Orden.Expulsar: break;
+                    case Orden.Ganar: break;
+                    case Orden.CambiarRonda: break;
+                    default: break;
                     }
                 }
             }
+        }
             catch ()
-            {
+    {
 
-                throw;
-            }
+        throw;
+    }
 
-        }
-        private void EnviarComando(Comandos Comando, TcpClient cliente)
-        {
-            var stream = cliente.GetStream();
-            var json = JsonSerializer.Serialize(stream);
-            var buffer = Encoding.UTF8.GetBytes(json);
-            stream.Write(buffer, 0, buffer.Length);
-        }
+}
+private void EnviarComando(Comandos Comando, TcpClient cliente)
+{
+    var stream = cliente.GetStream();
+    var json = JsonSerializer.Serialize(stream);
+    var buffer = Encoding.UTF8.GetBytes(json);
+    stream.Write(buffer, 0, buffer.Length);
+}
     }
 }

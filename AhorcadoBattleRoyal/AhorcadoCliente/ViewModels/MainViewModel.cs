@@ -71,13 +71,9 @@ namespace AhorcadoCliente.ViewModels
             dispatceher.BeginInvoke(() =>
             {
                 Mensaje = "";
-                if (VistaActual == TipoVista.)
+                if (VistaActual == TipoVista.Conexion)
                 {
-                    VistaActual = TipoVista.Conexion;
-                }
-                else
-                {
-                    VistaActual = TipoVista.Conexion;
+                    VistaActual = TipoVista.SalaEspera;
                 }
                 OnPropertyChanged(nameof(Mensaje));
             });

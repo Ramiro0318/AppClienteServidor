@@ -58,9 +58,11 @@ namespace AhorcadoServer.Services
                 try
                 {
                     var clienteNuevo = Servidor.AcceptTcpClient();
-                    var stram = clienteNuevo.ToString();
+                    Thread.Sleep(1000);
+                    var stram = clienteNuevo.GetStream();
 
                     byte[] buffer = new byte[clienteNuevo.Available];
+                    stram.ReadExactly(buffer, 0, buffer.Length);
                     var json = Encoding.UTF8.GetString(buffer);
 
                     var conectarCommand = JsonSerializer.Deserialize<ConectarComand>(json);
