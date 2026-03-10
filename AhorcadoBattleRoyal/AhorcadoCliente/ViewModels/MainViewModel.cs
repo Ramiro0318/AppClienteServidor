@@ -1,4 +1,5 @@
-﻿using AhorcadoCliente.Services;
+﻿using AhorcadoCliente.Models;
+using AhorcadoCliente.Services;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows.Input;
@@ -20,7 +21,7 @@ namespace AhorcadoCliente.ViewModels
         public ObservableCollection<string> Jugadores { get; set; } = new();
 
         public string? Nombre { get; set; }
-        public string? DireccionIP { get; set; }
+        public string? DireccionIP { get; set; } = "127.0.0.1";
         public string? Mensaje { get; set; }
 
 
@@ -38,13 +39,48 @@ namespace AhorcadoCliente.ViewModels
         public ICommand VerPartidaCommand { get; }
         public ICommand VolverCommand { get; }
 
+        Dispatcher dispatceher;
+
         public MainViewModel()
         {
+
+            dispatceher = new();
             IrASalaCommand = new RelayCommand(IrASala);
             IrAJuegoCommand = new RelayCommand(IrAJuego);
             VolverAConexionCommand = new RelayCommand(VolverAConexion);
             VerPartidaCommand = new RelayCommand(VerPartida);
             VolverCommand = new RelayCommand(Volver);
+
+            clienteService.JugadorConectado += clienteService_JugadorConectado;
+            clienteService.JugadorRechazado += clienteService_JugadorRechazado;
+        }
+
+        private void clienteService_JugadorRechazado()
+        {
+            dispatceher.BeginInvoke(() =>
+            {
+                Mensaje = "El nombre seleccionado ya está siendo utilizado";
+                OnPropertyChanged(nameof(Mensaje));
+            });
+        }
+
+        private void clienteService_JugadorConectado()
+        {
+            Jugadores.Clear();
+            obj.ForEach(J => Jugadores.add(j));
+            dispatceher.BeginInvoke(() =>
+            {
+                Mensaje = "";
+                if (VistaActual == TipoVista.)
+                {
+                    VistaActual = TipoVista.Conexion;
+                }
+                else
+                {
+                    VistaActual = TipoVista.Conexion;
+                }
+                OnPropertyChanged(nameof(Mensaje));
+            });
         }
 
         private void IrASala()
@@ -63,7 +99,8 @@ namespace AhorcadoCliente.ViewModels
                 OnPropertyChanged(nameof(Mensaje));
                 return;
             }
-                VistaActual = TipoVista.SalaEspera;
+
+            clienteService.Conectar(DireccionIP, Nombre);
 
         }
 
