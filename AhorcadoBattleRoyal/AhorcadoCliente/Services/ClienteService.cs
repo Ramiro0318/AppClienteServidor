@@ -43,8 +43,9 @@ namespace AhorcadoCliente.Services
 }
             }
 
-public event Action List<string>? JugadorConectado;
-public event Action JugadorRechazado;
+public event Action? List<string>? JugadorConectado;
+public event Action? JugadorRechazado;
+public event Action<TurnoComando>? TurnoCambiado;
 private void RecibirMensaje()
 {
     try
@@ -80,7 +81,15 @@ private void RecibirMensaje()
                         JugadorRechazad.Invoke();
                         break;
 
-                    case Orden.CambiarTurno: break;
+
+                    case Orden.CambiarTurno:
+                        var cambiarTurno = JsonSerializer.Deserialize<TurnoComando>(json);
+                        if (cambiarTurno != null) 
+                        {
+                            TurnoCambiado?.Invoke(cambiarTurno);
+                        }
+                        break;
+
                     case Orden.Expulsar: break;
                     case Orden.Ganar: break;
                     case Orden.CambiarRonda: break;

@@ -20,7 +20,7 @@
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                     <TextBlock Text="🎯 " FontSize="18" Foreground="#F1C40F"/>
                     <TextBlock Text="TURNO DE: " Foreground="White" FontSize="14" VerticalAlignment="Center"/>
-                    <TextBlock Text="Carlos" Foreground="#F1C40F" FontSize="18" FontWeight="Bold" VerticalAlignment="Center"/>
+                    <TextBlock Text="{Binding Turno.Nombre}" Foreground="#F1C40F" FontSize="18" FontWeight="Bold" VerticalAlignment="Center"/>
                 </StackPanel>
             </Border>
 
@@ -38,7 +38,7 @@
                         <TextBlock Text="🪢" FontSize="80" Foreground="#7F8C8D"
                                   HorizontalAlignment="Center" VerticalAlignment="Center"/>
                     </Border>
-                    <TextBlock Text="_ _ _ _   _ _ _ _ _" 
+                    <TextBlock Text="{Binding Turno.Palabra}" 
                               FontSize="28" FontWeight="Bold"
                               Foreground="#2C3E50" 
                               HorizontalAlignment="Center"/>
@@ -52,7 +52,7 @@
                     Margin="0,0,0,20">
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                     <TextBlock Text="❤️ " FontSize="20"/>
-                    <TextBlock Text="3" FontSize="20" FontWeight="Bold" Foreground="#C0392B"/>
+                    <TextBlock Text="{Binding Turno.NumErrores}" FontSize="20" FontWeight="Bold" Foreground="#C0392B"/>
                     <TextBlock Text=" / 6" FontSize="16" Foreground="#7F8C8D"/>
                 </StackPanel>
             </Border>
@@ -76,40 +76,19 @@
                 </WrapPanel>
             </StackPanel>
 
-            <Border Grid.Row="4" 
-                    Background="#E8F8F5" 
-                    CornerRadius="10" 
-                    Padding="15">
-                <StackPanel>
-                    <TextBlock Text="JUGADORES EN JUEGO" 
-                              FontSize="12" Foreground="#1ABC9C"
-                              Margin="0,0,0,10"/>
-                    <Grid Margin="0,2">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto"/>
-                            <ColumnDefinition Width="*"/>
-                        </Grid.ColumnDefinitions>
-                        <TextBlock Text="✓" Foreground="#27AE60" FontWeight="Bold" Margin="0,0,10,0"/>
-                        <TextBlock Grid.Column="1" Text="Carlos" Foreground="#148F77"/>
-                    </Grid>
-                    <Grid Margin="0,2">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto"/>
-                            <ColumnDefinition Width="*"/>
-                        </Grid.ColumnDefinitions>
-                        <TextBlock Text="✓" Foreground="#27AE60" FontWeight="Bold" Margin="0,0,10,0"/>
-                        <TextBlock Grid.Column="1" Text="Ana" Foreground="#148F77"/>
-                    </Grid>
-                    <Grid Margin="0,2">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto"/>
-                            <ColumnDefinition Width="*"/>
-                        </Grid.ColumnDefinitions>
-                        <TextBlock Text="✓" Foreground="#27AE60" FontWeight="Bold" Margin="0,0,10,0"/>
-                        <TextBlock Grid.Column="1" Text="Luis (tú)" Foreground="#148F77" FontWeight="Bold"/>
-                    </Grid>
-                </StackPanel>
-            </Border>
+            <ItemsControl IsEnabled="{Binding EsMiTurno}" ItemsSource="{Binding Turno.LetrasDisponibles}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Button Content="{Binding .}" Width="45" Height="45" Margin="3" Background="AliceBlue" ></Button>
+                    </DataTemplate>
+                    
+                </ItemsControl.ItemTemplate>
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <WrapPanel Orientation="Horizontal" HorizontalAlignment="Center"></WrapPanel>
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+            </ItemsControl>
 
             <Button Grid.Row="5" 
                     Content="VOLVER A SALA"

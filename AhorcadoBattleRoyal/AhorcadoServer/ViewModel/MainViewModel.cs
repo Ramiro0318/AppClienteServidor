@@ -27,6 +27,7 @@ namespace AhorcadoServer.ViewModels
         public ICommand CancelarNuevaRondaCommand { get; }
         public ICommand IniciarNuevaRondaCommand { get; }
 
+        public string Frase { set; get; } = "";
         Dispatcher hiloUI;
         public MainViewModel()
         {
@@ -40,7 +41,7 @@ namespace AhorcadoServer.ViewModels
             service.ClienteConectado += Service_ClienteConectado;
         }
 
-        
+
         private void Service_ClienteConectado()
         {
             App.Current.Dispatcher.BeginInvoke(() =>
@@ -60,7 +61,11 @@ namespace AhorcadoServer.ViewModels
 
         private void MostrarModalNuevaRonda(object? parameter = null)
         {
-            ModalNuevaRondaVisible = true;
+            if (Clientes.Count >= 2)
+            {
+                Frase = "";
+                ModalNuevaRondaVisible = true;
+            }
         }
 
         private void AbrirSala(object? parameter = null)
@@ -77,8 +82,8 @@ namespace AhorcadoServer.ViewModels
 
         private void IniciarNuevaRonda(object? parameter)
         {
-            string frase = parameter as string ?? "";
             ModalNuevaRondaVisible = false;
+            service.IniciarRonda(Frase);
         }
 
         public event PropertyChangedEventHandler? PropertyChanged;

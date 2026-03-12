@@ -1,5 +1,6 @@
 ﻿using AhorcadoCliente.Models;
 using AhorcadoCliente.Services;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows.Input;
@@ -23,6 +24,15 @@ namespace AhorcadoCliente.ViewModels
         public string? Nombre { get; set; }
         public string? DireccionIP { get; set; } = "127.0.0.1";
         public string? Mensaje { get; set; }
+        public bool EsMiTurno { get { return turno.JugadorTurno == Nombre; } set; }
+
+        private TurnoComando turno;
+
+        public TurnoComando Turno
+        {
+            get { return turno; }
+            set { turno = value; OnPropertyChanged(); }
+        }
 
 
         private TipoVista _vistaActual = TipoVista.Conexion;
@@ -30,7 +40,11 @@ namespace AhorcadoCliente.ViewModels
         public TipoVista VistaActual
         {
             get => _vistaActual;
-            set { _vistaActual = value; OnPropertyChanged(); }
+            set
+            {
+                _vistaActual = value; OnPropertyChanged();
+                OnPropertyChanged(nameof(EsMiTurno));
+            }
         }
 
         public ICommand IrASalaCommand { get; }
@@ -53,8 +67,21 @@ namespace AhorcadoCliente.ViewModels
 
             clienteService.JugadorConectado += clienteService_JugadorConectado;
             clienteService.JugadorRechazado += clienteService_JugadorRechazado;
+            clienteService.TurnoCambiado += clienteService_TurnoCambiado;
         }
 
+        private void clienteService_TurnoCambiado()
+        {
+            dispatceher.BeginInvoke(() =>
+            {
+
+                if (VistaActual == TipoVista.SalaEspera)
+                {
+                    VistaActual = TipoVista.Juego;
+                }
+                turno = obj;
+            });
+        }
         private void clienteService_JugadorRechazado()
         {
             dispatceher.BeginInvoke(() =>

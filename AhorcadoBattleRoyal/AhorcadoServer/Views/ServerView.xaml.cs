@@ -1,4 +1,5 @@
-﻿using System;
+﻿using AhorcadoServer.ViewModels;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -23,6 +24,15 @@ namespace AhorcadoServer.Views
         public ServerView()
         {
             InitializeComponent();
+        }
+
+        private void FrasePasswordBox_PasswordChanged(object sender, RoutedEventArgs e)
+        {
+            var vm = DataContext as MainViewModel;
+            if (vm != null)
+            {
+                vm.Frase = FrasePasswordBox.Password;
+            }
         }
     }
 }
