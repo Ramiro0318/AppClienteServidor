@@ -41,11 +41,12 @@ namespace AhorcadoServer.ViewModels
         }
 
         
-        private void Service_ClienteConectado(Cliente obj)
+        private void Service_ClienteConectado()
         {
             App.Current.Dispatcher.BeginInvoke(() =>
             {
-                Clientes.Add(obj);
+                Clientes.Clear();
+                service.Clientes.ForEach(x => Clientes.Add(x));
             });
         }
 

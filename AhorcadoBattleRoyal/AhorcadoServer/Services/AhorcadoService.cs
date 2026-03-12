@@ -30,7 +30,7 @@ namespace AhorcadoServer.Services
         public event Action<string>? LogEnviado;
         public event Action? RondaRequerida;
         public event Action? JuegoFinalizado;
-        public event Action<Cliente>? ClienteConectado;
+        public event Action? ClienteConectado;
         public void AbrirSala()
         {
             if (!salaAbierta)
@@ -92,7 +92,7 @@ namespace AhorcadoServer.Services
                                 };
 
                                 Clientes.Add(cliente);
-                                ClienteConectado?.Invoke(cliente);
+                                ClienteConectado?.Invoke();
                                 LogEnviado?.Invoke($"{cliente.Nombre} se ha conectado");
 
                                 var bienvenido = new BienvenidoComando
@@ -165,7 +165,7 @@ namespace AhorcadoServer.Services
                 {
                     while (client.Connected)
                     {
-                        if (client.Available > 0)
+                        if (!client.Client.Poll(1000, SelectMode.SelectRead) && client.Available > 0)
                         {
                             var stream = client.GetStream();
                             var buffer = new byte[client.Available];
@@ -188,6 +188,27 @@ namespace AhorcadoServer.Services
                     }
                 }
                 catch { }
+                finally 
+                {
+                    lock (Clientes) 
+                    {
+                        var jugador = Clientes.FirstOrDefault(x => x.Conexion == client);
+                        if (jugador != null) 
+                        {
+                            Clientes.Remove(jugador);
+                            LogEnviado?.Invoke($"{jugador.Nombre} se ha desconectado");
+
+                            var bienvenido = new BienvenidoComando
+                            {
+                                Comando = Orden.Bienvenido,
+                                Nombres = Clientes.Select(x => x.Nombre).ToList(),
+                            };
+
+                            EnviarTodos(bienvenido);
+                            ClienteConectado.Invoke();
+                        }
+                    }
+                }
             }
         }
 
