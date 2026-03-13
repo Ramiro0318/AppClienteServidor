@@ -105,6 +105,17 @@ private void RecibirMensaje()
     }
 
 }
+
+public void EnviarLetra(char letra) 
+{
+    var respodner = new ResponderComando
+    {
+        Comando = Orden.Responder,
+        Letra = letra.ToString()
+    };
+
+    EnviarComando(responder, client);
+}
 private void EnviarComando(Comandos Comando, TcpClient cliente)
 {
     var stream = cliente.GetStream();

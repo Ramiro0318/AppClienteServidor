@@ -52,6 +52,7 @@ namespace AhorcadoCliente.ViewModels
         public ICommand VolverAConexionCommand { get; }
         public ICommand VerPartidaCommand { get; }
         public ICommand VolverCommand { get; }
+        public ICommand EnviarLetraCommand {  get; }
 
         Dispatcher dispatceher;
 
@@ -64,22 +65,34 @@ namespace AhorcadoCliente.ViewModels
             VolverAConexionCommand = new RelayCommand(VolverAConexion);
             VerPartidaCommand = new RelayCommand(VerPartida);
             VolverCommand = new RelayCommand(Volver);
+            EnviarLetraCommand = new RelayCommand(EnviarLetra);
 
             clienteService.JugadorConectado += clienteService_JugadorConectado;
             clienteService.JugadorRechazado += clienteService_JugadorRechazado;
             clienteService.TurnoCambiado += clienteService_TurnoCambiado;
         }
 
-        private void clienteService_TurnoCambiado()
+        private void EnviarLetra(char letra)
+        {
+            clienteService.EnviarLetra(letra);
+
+        }
+
+        private void clienteService_TurnoCambiado(Models.TurnoComando obj)
         {
             dispatceher.BeginInvoke(() =>
             {
-
-                if (VistaActual == TipoVista.SalaEspera)
+                if (obj.Palabra != null)
                 {
-                    VistaActual = TipoVista.Juego;
+
+                    if (VistaActual == TipoVista.SalaEspera)
+                    {
+                        VistaActual = TipoVista.Juego;
+                    }
+
+                    obj.Palabra = string.Join(' ', obj.Palabra.ToCharArray());
+                    turno = obj;
                 }
-                turno = obj;
             });
         }
         private void clienteService_JugadorRechazado()
@@ -154,25 +167,4 @@ namespace AhorcadoCliente.ViewModels
         }
     }
 
-    public class RelayCommand : ICommand
-    {
-        private readonly Action _execute;
-
-        public RelayCommand(Action execute)
-        {
-            _execute = execute;
-        }
-
-        public event EventHandler? CanExecuteChanged;
-
-        public bool CanExecute(object? parameter)
-        {
-            return true;
-        }
-
-        public void Execute(object? parameter)
-        {
-            _execute();
-        }
-    }
 }

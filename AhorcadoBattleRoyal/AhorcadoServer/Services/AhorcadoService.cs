@@ -129,6 +129,10 @@ namespace AhorcadoServer.Services
 
         public void IniciarRonda(string frase)
         {
+            if (salaAbierta)
+            {
+                CerrarSala();
+            }
             Errores = 0;
             fraseAdivinar = frase.ToUpper();
             Ronda++;

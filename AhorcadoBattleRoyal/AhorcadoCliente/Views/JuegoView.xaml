@@ -20,7 +20,7 @@
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                     <TextBlock Text="🎯 " FontSize="18" Foreground="#F1C40F"/>
                     <TextBlock Text="TURNO DE: " Foreground="White" FontSize="14" VerticalAlignment="Center"/>
-                    <TextBlock Text="{Binding Turno.Nombre}" Foreground="#F1C40F" FontSize="18" FontWeight="Bold" VerticalAlignment="Center"/>
+                    <TextBlock FontFamily="Cascadia Mono" Text="{Binding Turno.Nombre}" Foreground="#F1C40F" FontSize="18" FontWeight="Bold" VerticalAlignment="Center"/>
                 </StackPanel>
             </Border>
 
