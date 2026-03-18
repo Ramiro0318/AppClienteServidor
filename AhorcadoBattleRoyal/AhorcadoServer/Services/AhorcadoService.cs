@@ -169,7 +169,7 @@ namespace AhorcadoServer.Services
                 {
                     while (client.Connected)
                     {
-                        if (!client.Client.Poll(1000, SelectMode.SelectRead) && client.Available > 0)
+                        if (client.Available > 0)
                         {
                             var stream = client.GetStream();
                             var buffer = new byte[client.Available];

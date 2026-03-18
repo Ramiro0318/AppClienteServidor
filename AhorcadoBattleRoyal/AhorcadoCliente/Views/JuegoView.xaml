@@ -79,7 +79,9 @@
             <ItemsControl IsEnabled="{Binding EsMiTurno}" ItemsSource="{Binding Turno.LetrasDisponibles}">
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
-                        <Button Content="{Binding .}" Width="45" Height="45" Margin="3" Background="AliceBlue" ></Button>
+                        <Button Command="{Binding DataContext.EnviarLetraCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                                commandParameter="{Binding .}"
+                                Content="{Binding .}" Width="45" Height="45" Margin="3" Background="AliceBlue" ></Button>
                     </DataTemplate>
                     
                 </ItemsControl.ItemTemplate>

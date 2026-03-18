@@ -44,8 +44,10 @@ namespace AhorcadoCliente.Services
             }
 
 public event Action? List<string>? JugadorConectado;
-public event Action? JugadorRechazado;
+public event Action? JugadorRechazado, RondaCambiada;
 public event Action<TurnoComando>? TurnoCambiado;
+public event Action<string>? JugadorExpulsado, JugadorGano;
+public event Action<string, string>? JugadorGano;
 private void RecibirMensaje()
 {
     try
@@ -84,15 +86,31 @@ private void RecibirMensaje()
 
                     case Orden.CambiarTurno:
                         var cambiarTurno = JsonSerializer.Deserialize<TurnoComando>(json);
-                        if (cambiarTurno != null) 
+                        if (cambiarTurno != null)
                         {
                             TurnoCambiado?.Invoke(cambiarTurno);
                         }
                         break;
 
-                    case Orden.Expulsar: break;
-                    case Orden.Ganar: break;
-                    case Orden.CambiarRonda: break;
+                    case Orden.Expulsar:
+                        var ComandoExpulsar = JsonSerializer.Deserialize<ExpulsarComando>(json);
+
+                        if (ComandoExpulsar != null)
+                        {
+                            JugadorExpulsado?.invoke(ComandoExpulsar.Jugador ?? "", ComandoExpulsar.Palabra ?? "");
+                        }
+                        break;
+                    case Orden.Ganar:
+                        var ComandoGanar = JsonSerializer.Deserialize<GanadorComando>(json);
+
+                        if (ComandoGanar != null)
+                        {
+                            JugadorGano?.invoke(ComandoExpulsar.Jugador ?? "");
+                        }
+                        break;
+                    case Orden.CambiarRonda:
+                        RondaCambiada.Invoke();
+                        break;
                     default: break;
                     }
                 }
@@ -106,7 +124,7 @@ private void RecibirMensaje()
 
 }
 
-public void EnviarLetra(char letra) 
+public void EnviarLetra(char letra)
 {
     var respodner = new ResponderComando
     {
