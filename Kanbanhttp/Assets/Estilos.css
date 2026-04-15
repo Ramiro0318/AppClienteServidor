@@ -1,1 +1,67 @@
-﻿
+﻿body, html {
+    margin: 0;
+    padding: 0;
+    font-family: Tahoma;
+}
+
+h1 {
+    text-align: center;
+    font-size: 2.1em;
+    
+}
+
+table {
+    width: 100%;
+    background-color: whitesmoke;
+    border: 1px solid black;
+    margin: 30px;
+}
+
+    table thead th {
+        padding: 10px 0;
+        width: 25%;
+        background-color: navy;
+        color: white;
+    }
+
+table thead th:nth-child(2) {
+    background-color: darkorange;
+}
+
+
+    table thead th:nth-child(3) {
+        background-color: purple;
+    }
+
+    table thead th:nth-child(4) {
+        background-color: green;
+    }
+
+
+.postit {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    background-color: beige;
+    box-shadow: darkgray 1px 3px 4px;
+    margin: 10px;
+    padding: 4px;
+
+}
+
+    .postit .nombre {
+       text-align: center;
+       font-weight: bold;
+    }
+
+    .postit .descripcion {
+        text-align:justify;
+        padding: 5px;
+    }
+
+    .postit .fecha {
+        text-align:end;
+        font-size: small;
+        color: darkgray;
+        padding: 2px; 
+    }
