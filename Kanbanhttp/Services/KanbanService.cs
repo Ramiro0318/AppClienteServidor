@@ -68,12 +68,53 @@ namespace Kanbanhttp.Services
 
                 var buffer = Encoding.UTF8.GetBytes(json);
                 Enviar(response, buffer, "aplication/json");
-                
+
             }
+            else if (request.HttpMethod == "POST" && request.RawUrl == "/movertarea")
+            {
+                var buffer = new byte[request.ContentLength64];
+                request.InputStream.ReadExactly(buffer, 0, buffer.Length);
+
+                var json = Encoding.UTF8.GetString(buffer);
+                Tarea? t = JsonSerializer.Deserialize<Tarea>(json);
+
+                if (t != null)
+                {
+                    response.StatusCode = (int)HttpStatusCode.OK;
+                }
+                else
+                {
+                    response.StatusCode = (int)HttpStatusCode.BadRequest;
+                }
+
+            }
+            else if (request.HttpMethod == "GET" && Path.IsPathFullyQualified(request.RawUrl ?? ""))
+            {
+                if (!File.Exists("/assets" + request.RawUrl))
+                {   //get file name
+                    response.StatusCode = 404;
+                }
+                else
+                {
+                    var archivo = File.ReadAllBytes("/assets" + request.Url);
+                    Enviar(response, archivo, getMime(Path.GetExtension(request.RawUrl ?? "")));
+                }
+            }
+            else { }
             response.Close();
 
         }
 
+        string getMime(string extension)
+        {
+            switch (extension)
+            {
+                case ".html": return "text/html";
+                case ".css": return "text/css";
+                case ".js": return "text/js";
+                default: return "text";
+            }
+        }
         private static void Enviar(HttpListenerResponse response, byte[]? buffer, string type)
         {
             if (buffer != null)
@@ -93,7 +134,7 @@ namespace Kanbanhttp.Services
         {
             try
             {
-                byte[] buffer = File.ReadAllBytes("/Assets/" + nombre);
+                byte[] buffer = File.ReadAllBytes("assets/" + nombre);
                 return buffer;
             }
             catch (Exception)
