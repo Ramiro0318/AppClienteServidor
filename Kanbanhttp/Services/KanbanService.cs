@@ -17,7 +17,8 @@ namespace Kanbanhttp.Services
 
         public KanbanService()
         {
-            string url = "http://*:8080/kanban/";
+            //string url = "http://*:8080/kanban/";
+            string url = "http://+:8080/kanban/";
             servidor.Prefixes.Add(url);
 
         }
@@ -53,12 +54,12 @@ namespace Kanbanhttp.Services
             var request = context.Request;
             var response = context.Response;
 
-            if (request.HttpMethod == "GET" && request.RawUrl == "/tablero")
+            if (request.HttpMethod == "GET" && request.RawUrl == "/kanban/tablero")
             {
-                byte[]? buffer = LeerRecurso("index.html");
+                byte[]? buffer = LeerRecurso("/index.html");
                 Enviar(response, buffer, "text/html");
             }
-            else if (request.HttpMethod == "GET" && request.RawUrl == "/tareas")
+            else if (request.HttpMethod == "GET" && request.RawUrl == "/kanban/tareas")
             {
                 string json = "";
                 lock (Tareas)
@@ -70,7 +71,7 @@ namespace Kanbanhttp.Services
                 Enviar(response, buffer, "aplication/json");
 
             }
-            else if (request.HttpMethod == "POST" && request.RawUrl == "/movertarea")
+            else if (request.HttpMethod == "POST" && request.RawUrl == "/kanban/movertarea")
             {
                 var buffer = new byte[request.ContentLength64];
                 request.InputStream.ReadExactly(buffer, 0, buffer.Length);
@@ -88,15 +89,16 @@ namespace Kanbanhttp.Services
                 }
 
             }
-            else if (request.HttpMethod == "GET" && Path.IsPathFullyQualified(request.RawUrl ?? ""))
+            //else if (request.HttpMethod == "GET" && Path.IsPathFullyQualified(request.RawUrl ?? ""))
+            else if (request.HttpMethod == "GET" && new string[] { "/kanban/index.html", "/kanban/estilos.css", "/kanban/script.js" }.Contains(request.RawUrl))
             {
-                if (!File.Exists("/assets" + request.RawUrl))
+                if (!File.Exists("assets/" + Path.GetFileName(request.RawUrl)))
                 {   //get file name
                     response.StatusCode = 404;
                 }
                 else
                 {
-                    var archivo = File.ReadAllBytes("/assets" + request.Url);
+                    var archivo = File.ReadAllBytes("assets/" + Path.GetFileName(request.RawUrl));
                     Enviar(response, archivo, getMime(Path.GetExtension(request.RawUrl ?? "")));
                 }
             }
@@ -111,7 +113,7 @@ namespace Kanbanhttp.Services
             {
                 case ".html": return "text/html";
                 case ".css": return "text/css";
-                case ".js": return "text/js";
+                case ".js": return "text/javascript";
                 default: return "text";
             }
         }
@@ -119,10 +121,10 @@ namespace Kanbanhttp.Services
         {
             if (buffer != null)
             {
-                response.OutputStream.Write(buffer, 0, buffer.Length);
                 response.ContentLength64 = buffer.Length;
-                response.ContentType = "text/html";
+                response.ContentType = type;
                 response.StatusCode = 200;
+                response.OutputStream.Write(buffer, 0, buffer.Length);
             }
             else
             {

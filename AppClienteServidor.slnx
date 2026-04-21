@@ -14,7 +14,6 @@
   </Folder>
   <Folder Name="/Unidad2/" />
   <Folder Name="/Unidad2/HTTP/">
-    <File Path="index.html" />
     <Project Path="EjemploHTTP/EjemploHTTP.csproj" Id="82444037-dafc-4216-abf5-6ab1a4edd9a4" />
     <Project Path="Kanbanhttp/Kanbanhttp.csproj" />
   </Folder>
