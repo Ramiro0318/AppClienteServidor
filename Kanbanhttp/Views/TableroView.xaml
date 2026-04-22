@@ -20,8 +20,8 @@
         </Grid.ColumnDefinitions>
 
         <DockPanel Grid.ColumnSpan="4" Margin="10,5">
-            <Button FontSize="20" Width="50" DockPanel.Dock="Right">+</Button>
-            <TextBox FontSize="20" Margin="0, 0, 10, 0"></TextBox>
+            <Button Command="{Binding AgregarCommand}" FontSize="20" Width="50" DockPanel.Dock="Right">+</Button>
+            <TextBox Text="{Binding Texto}" FontSize="20"  Margin="0, 0, 10, 0"></TextBox>
         </DockPanel>
 
         <Label Grid.Row="1" Grid.Column="0" Background="Navy" Foreground="White" HorizontalContentAlignment="Center" FontWeight="Bold">Pendientes</Label>
@@ -29,32 +29,41 @@
         <Label Grid.Row="1" Grid.Column="2" Background="Purple" Foreground="White" HorizontalContentAlignment="Center" FontWeight="Bold">Hecho</Label>
         <Label Grid.Row="1" Grid.Column="3"  Background="Green" Foreground="White" HorizontalContentAlignment="Center" FontWeight="Bold">Finalizado</Label>
 
-        <ListBox Grid.Row="2" Grid.Column="0">
-            <local:Postit></local:Postit>
-            <local:Postit></local:Postit>
-            <local:Postit></local:Postit>
-        </ListBox>
+        <ItemsControl ItemsSource="{Binding Pendientes}" Background="White" Grid.Row="2" Grid.Column="0">
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <local:Postit></local:Postit>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
 
 
-        <ListBox Grid.Row="2" Grid.Column="1">
-            <local:Postit></local:Postit>
-            <local:Postit></local:Postit>
-            <local:Postit></local:Postit>
-        </ListBox>
+        <ItemsControl ItemsSource="{Binding EnProceso}" Background="White" Grid.Row="2" Grid.Column="1">
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <local:Postit></local:Postit>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
 
 
-        <ListBox Grid.Row="2" Grid.Column="2">
-            <local:Postit></local:Postit>
-            <local:Postit></local:Postit>
-            <local:Postit></local:Postit>
-        </ListBox>
+        <ItemsControl ItemsSource="{Binding Hecho}" Background="White" Grid.Row="2" Grid.Column="2">
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <local:Postit></local:Postit>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
 
 
-        <ListBox Grid.Row="2" Grid.Column="3">
-            <local:Postit></local:Postit>
-            <local:Postit></local:Postit>
-            <local:Postit></local:Postit>
-        </ListBox>
+        <ItemsControl ItemsSource="{Binding Finalizado}" Background="White" Grid.Row="2" Grid.Column="3">
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <local:Postit></local:Postit>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+        
         <local:EliminarUserControl Visibility="Visible" Grid.ColumnSpan="4" Grid.RowSpan="3"></local:EliminarUserControl>
     </Grid>
 </UserControl>

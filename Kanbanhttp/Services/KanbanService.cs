@@ -20,7 +20,7 @@ namespace Kanbanhttp.Services
             //string url = "http://*:8080/kanban/";
             string url = "http://+:8080/kanban/";
             servidor.Prefixes.Add(url);
-
+            Deserializar();
         }
 
         public void Iniciar()
@@ -153,7 +153,14 @@ namespace Kanbanhttp.Services
             lock (Tareas)
             {
                 t.Estado = Estados.Pendiente;
-                t.Id = Tareas.Max(x => x.Id) + 1;
+                if (Tareas.Count > 0)
+                {
+                    t.Id = Tareas.Max(x => x.Id) + 1;
+                }
+                else
+                {
+                    t.Id = 1;
+                }
                 Tareas.Add(t);
                 Serializar();
                 TareaCreada?.Invoke(t);
@@ -207,8 +214,17 @@ namespace Kanbanhttp.Services
         {
             lock (Tareas)
             {
-                Tareas?.AddRange(JsonSerializer.Deserialize<List<Tarea>>(File.ReadAllText("kanban.json")) ?? []);
-                Tareas?.ForEach(x => TareaCreada?.Invoke(x));
+                try
+                {
+
+                    Tareas?.AddRange(JsonSerializer.Deserialize<List<Tarea>>(File.ReadAllText("kanban.json")) ?? []);
+                    Tareas?.ForEach(x => TareaCreada?.Invoke(x));
+                }
+                catch (Exception)
+                {
+
+                    throw;
+                }
             }
         }
 

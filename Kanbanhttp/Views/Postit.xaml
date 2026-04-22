@@ -13,8 +13,8 @@
         </Grid.RowDefinitions>
 
         <TextBlock Grid.Row="0" HorizontalAlignment="Right" Foreground="Red">❌</TextBlock>
-        <TextBlock Grid.Row="0" HorizontalAlignment="Center" FontSize="26" FontWeight="Bold">Nombre del usuario</TextBlock>
-        <TextBlock Grid.Row="1" HorizontalAlignment="Center" FontSize="24"></TextBlock>
-        <TextBlock Grid.Row="2" HorizontalAlignment="Right" FontSize="20" FontWeight="Bold" Margin="15,10">Nombre del usuario</TextBlock>
+        <TextBlock Grid.Row="0" HorizontalAlignment="Center" FontSize="26" FontWeight="Bold" Text="{Binding Usuario}"></TextBlock>
+        <TextBlock Grid.Row="1" HorizontalAlignment="Center" FontSize="24" Text="{Binding Descripcion}"></TextBlock>
+        <TextBlock Grid.Row="2" HorizontalAlignment="Right" FontSize="20" FontWeight="Bold" Margin="15,10" Text="{Binding Fecha}"></TextBlock>
     </Grid>
 </UserControl>
