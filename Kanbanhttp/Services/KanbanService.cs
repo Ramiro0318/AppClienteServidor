@@ -189,10 +189,16 @@ namespace Kanbanhttp.Services
         public void CambiarEstado(Tarea t)
         {
             if (t.Estado != Estados.Finalizado) return;
-            //t.Estado = t.Estado + 1;
-            t.Estado++;
-            Serializar();
-            TareaModificada?.Invoke(t);
+
+            var tarea = Tareas.FirstOrDefault(x => x.Id == t.Id);
+            if (tarea != null)
+            {
+                tarea.Usuario = tarea.Usuario;
+                //t.Estado = t.Estado + 1;
+                tarea.Estado++;
+                Serializar();
+                TareaModificada?.Invoke(t);
+            }
         }
 
         public void CambiarEstadoAdmin(Tarea t, Estados estado)

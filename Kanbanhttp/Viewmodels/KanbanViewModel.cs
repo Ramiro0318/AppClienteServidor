@@ -5,7 +5,9 @@ using Kanbanhttp.Services;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel.DataAnnotations;
 using System.Text;
+using System.Windows.Threading;
 
 namespace Kanbanhttp.Viewmodels
 {
@@ -15,13 +17,18 @@ namespace Kanbanhttp.Viewmodels
         private string errores = "";
 
         KanbanService Service = new();
+
+        Dispatcher current;
         public KanbanViewModel()
         {
+            current = Dispatcher.CurrentDispatcher;
             Service.Iniciar();
             Service.TareaCreada += Service_TareaCreada;
+            Service.TareaModificada += Service_TareaModificada;
         }
 
-        
+
+
         public ObservableCollection<Tarea> Pendientes { get; set; } = new();
         public ObservableCollection<Tarea> EnProceso { get; set; } = new();
         public ObservableCollection<Tarea> Hecho { get; set; } = new();
@@ -31,7 +38,7 @@ namespace Kanbanhttp.Viewmodels
         private string texto = "";
 
         [RelayCommand]
-        void Agregar() 
+        void Agregar()
         {
             Tarea t = new Tarea();
             t.Descripcion = Texto;
@@ -47,31 +54,39 @@ namespace Kanbanhttp.Viewmodels
             Pendientes.Add(obj);
         }
 
+        private void Service_TareaModificada(Tarea obj)
+        {
+            LlenarLista();
+        }
+
 
         void LlenarLista()
         {
-            lock (Service.Tareas)
+            current.BeginInvoke(() =>
             {
-                Pendientes.Clear();
+                lock (Service.Tareas)
+                {
+                    Pendientes.Clear();
 
-                foreach (var p in Service.Tareas.Where(x => x.Estado == Estados.Pendiente))
-                {
-                    Pendientes.Add(p);
-                }
-                foreach (var p in Service.Tareas.Where(x => x.Estado == Estados.EnProceso))
-                {
-                    EnProceso.Add(p);
-                }
-                foreach (var p in Service.Tareas.Where(x => x.Estado == Estados.Hecho))
-                {
-                    Hecho.Add(p);
-                }
-                foreach (var p in Service.Tareas.Where(x => x.Estado == Estados.Finalizado))
-                {
-                    Finalizado.Add(p);
-                }
+                    foreach (var p in Service.Tareas.Where(x => x.Estado == Estados.Pendiente))
+                    {
+                        Pendientes.Add(p);
+                    }
+                    foreach (var p in Service.Tareas.Where(x => x.Estado == Estados.EnProceso))
+                    {
+                        EnProceso.Add(p);
+                    }
+                    foreach (var p in Service.Tareas.Where(x => x.Estado == Estados.Hecho))
+                    {
+                        Hecho.Add(p);
+                    }
+                    foreach (var p in Service.Tareas.Where(x => x.Estado == Estados.Finalizado))
+                    {
+                        Finalizado.Add(p);
+                    }
 
-            }
+                }
+            });
         }
 
 
