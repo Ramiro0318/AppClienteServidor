@@ -15,6 +15,7 @@
   <Folder Name="/Unidad2/" />
   <Folder Name="/Unidad2/HTTP/">
     <Project Path="EjemploHTTP/EjemploHTTP.csproj" Id="82444037-dafc-4216-abf5-6ab1a4edd9a4" />
+    <Project Path="GatoLongPolling/GatoLongPolling/GatoLongPolling.csproj" />
     <Project Path="Kanbanhttp/Kanbanhttp.csproj" />
   </Folder>
 </Solution>

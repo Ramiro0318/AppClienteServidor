@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gato · Long Polling</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background: linear-gradient(135deg, #1e293b, #0f172a);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .app {
+            width: 100%;
+            max-width: 500px;
+            padding: 20px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 48px;
+            padding: 32px 24px;
+            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);
+            text-align: center;
+        }
+
+        .title {
+            font-size: 2.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #0f172a, #3b82f6);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 8px;
+        }
+
+        .subtitle {
+            color: #64748b;
+            font-size: 0.85rem;
+            margin-bottom: 32px;
+            border-bottom: 1px solid #e2e8f0;
+            display: inline-block;
+            padding-bottom: 6px;
+        }
+
+        .input-field {
+            width: 100%;
+            padding: 14px 20px;
+            font-size: 1rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 60px;
+            outline: none;
+            text-align: center;
+            margin-bottom: 16px;
+        }
+
+        .input-field:focus {
+            border-color: #3b82f6;
+        }
+
+        .btn-primary {
+            width: 100%;
+            background: #3b82f6;
+            color: white;
+            border: none;
+            padding: 14px;
+            border-radius: 60px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .btn-primary:hover {
+            background: #2563eb;
+        }
+
+        .board {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin: 28px 0;
+            background: #f1f5f9;
+            padding: 16px;
+            border-radius: 32px;
+        }
+
+        .cell {
+            aspect-ratio: 1;
+            background: white;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            font-weight: 800;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+        }
+
+        .info-box {
+            background: #f1f5f9;
+            padding: 12px;
+            border-radius: 60px;
+            font-weight: 500;
+            margin: 16px 0;
+            color: #1e293b;
+        }
+
+        .btn-secondary {
+            width: 100%;
+            background: #64748b;
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 60px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            margin-top: 12px;
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="app">
+        <!-- Pantalla de conexión -->
+        <div id="pantallaLogin" class="card">
+            <div class="title">🐱 GATO</div>
+            <div class="subtitle">Long Polling · Tic Tac Toe</div>
+            <input type="text" id="nombreInput" class="input-field" placeholder="Tu nombre" maxlength="20">
+            <button id="btnConectar" class="btn-primary">🔌 Conectar y jugar</button>
+        </div>
+
+        <!-- Pantalla del juego -->
+        <div id="pantallaJuego" class="card hidden">
+            <div class="title">🎮 Partida</div>
+            <div id="infoSala" class="info-box">🟢 Conectando...</div>
+            <div id="tablero" class="board">
+                <div class="cell"></div>
+                <div class="cell"></div>
+                <div class="cell"></div>
+                <div class="cell"></div>
+                <div class="cell"></div>
+                <div class="cell"></div>
+                <div class="cell"></div>
+                <div class="cell"></div>
+                <div class="cell"></div>
+            </div>
+            <div id="estado" class="info-box">⏳ Esperando oponente...</div>
+            <button id="btnReiniciar" class="btn-secondary">🔄 Nueva partida</button>
+        </div>
+    </div>
+
+    <script>
+        // SIMULACIÓN VISUAL - Solo para mostrar pantallas
+        const pantallaLogin = document.getElementById('pantallaLogin');
+        const pantallaJuego = document.getElementById('pantallaJuego');
+        const btnConectar = document.getElementById('btnConectar');
+        const btnReiniciar = document.getElementById('btnReiniciar');
+        const estadoDiv = document.getElementById('estado');
+        const infoSala = document.getElementById('infoSala');
+
+        // Botón conectar: muestra pantalla de juego y luego mensaje final
+        btnConectar.addEventListener('click', () => {
+            const nombre = document.getElementById('nombreInput').value.trim();
+            
+            if (!nombre) {
+                alert('Escribe tu nombre primero');
+                return;
+            }
+
+            // Cambiar a pantalla de juego
+            pantallaLogin.classList.add('hidden');
+            pantallaJuego.classList.remove('hidden');
+            
+            // Mostrar mensaje de espera
+            infoSala.innerHTML = `👋 Hola ${nombre}`;
+            estadoDiv.innerHTML = '⏳ Buscando oponente...';
+            
+            // Simular que encuentra oponente después de 2 segundos
+            setTimeout(() => {
+                estadoDiv.innerHTML = '🎉 ¡Oponente encontrado! Partida iniciada';
+                infoSala.innerHTML = `Sala #42 · Juegas con X`;
+                
+                // Simular final de partida después de 3 segundos
+                setTimeout(() => {
+                    estadoDiv.innerHTML = '🏆 ¡Ganaste! Partida terminada';
+                    infoSala.innerHTML = `Sala #42 · FINALIZADO`;
+                }, 3000);
+            }, 2000);
+        });
+
+        // Botón reiniciar: vuelve a la pantalla de login
+        btnReiniciar.addEventListener('click', () => {
+            pantallaJuego.classList.add('hidden');
+            pantallaLogin.classList.remove('hidden');
+            document.getElementById('nombreInput').value = '';
+        });
+    </script>
+</body>
+</html>
