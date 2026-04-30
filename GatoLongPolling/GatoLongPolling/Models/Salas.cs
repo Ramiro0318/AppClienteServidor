@@ -11,6 +11,13 @@ namespace GatoLongPolling.Models
 
         public Sala SolicitarSala(string nombre, string id) 
         {
+            //Verificar si ya tiene sala
+            var existentes = SalasDisponibles.FirstOrDefault(x => x.IdJugador1 == id || x.IdJugador2 == id);
+            if (existentes != null) 
+            {
+                return existentes;
+            }
+
             var salaAbierta = SalasDisponibles.FirstOrDefault(x => x.IdJugador1 == null || x.IdJugador2 == null);
 
             if (salaAbierta == null) 

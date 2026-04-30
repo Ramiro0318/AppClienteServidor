@@ -171,11 +171,14 @@
         const btnReiniciar = document.getElementById('btnReiniciar');
         const estadoDiv = document.getElementById('estado');
         const infoSala = document.getElementById('infoSala');
+        const celdas = document.getElementById('tablero');
 
         // Botón conectar: muestra pantalla de juego y luego mensaje final
         btnConectar.addEventListener('click', () => {
             const nombre = document.getElementById('nombreInput').value.trim();
-            
+            localStorage.setItem("nombre", nombre);
+
+
             if (!nombre) {
                 alert('Escribe tu nombre primero');
                 return;
@@ -188,19 +191,59 @@
             // Mostrar mensaje de espera
             infoSala.innerHTML = `👋 Hola ${nombre}`;
             estadoDiv.innerHTML = '⏳ Buscando oponente...';
-            
-            // Simular que encuentra oponente después de 2 segundos
-            setTimeout(() => {
-                estadoDiv.innerHTML = '🎉 ¡Oponente encontrado! Partida iniciada';
-                infoSala.innerHTML = `Sala #42 · Juegas con X`;
+
+            solicitarSala();
+
+
+            //// Simular que encuentra oponente después de 2 segundos
+            //setTimeout(() => {
+            //    estadoDiv.innerHTML = '🎉 ¡Oponente encontrado! Partida iniciada';
+            //    infoSala.innerHTML = `Sala #42 · Juegas con X`;
                 
-                // Simular final de partida después de 3 segundos
-                setTimeout(() => {
-                    estadoDiv.innerHTML = '🏆 ¡Ganaste! Partida terminada';
-                    infoSala.innerHTML = `Sala #42 · FINALIZADO`;
-                }, 3000);
-            }, 2000);
+            //    // Simular final de partida después de 3 segundos
+            //    setTimeout(() => {
+            //        estadoDiv.innerHTML = '🏆 ¡Ganaste! Partida terminada';
+            //        infoSala.innerHTML = `Sala #42 · FINALIZADO`;
+            //    }, 3000);
+            //}, 2000);
         });
+
+
+        async function solicitarSala() {
+            let nombre = localStorage.getItem("nombre", nombre);
+            let id = localStorage.getItem("idUsuario")
+
+            if (!id) {
+                id = crypto.randomUUID();
+                localStorage.setItem("idUsuario", id);
+
+            }
+
+            let json = { Nombre: nombre, Id: id };
+
+            let res = await fetch('/gato/registrar', {
+                method: "POST",
+                body: JSON.stringify(json),
+                headers: {
+                    "content-type": "application/json"
+                }
+            });
+
+            if (res.ok) {
+                let tablero = await res.json();
+
+                infoSala.innerHTML = tablero.MensajeSuperior;
+                estadoDiv.innerHTML = tablero.MensajeInferior;
+
+                for (var i = 0; i < tablero.Tablero.length; i++) {
+                    celdas[i].innerText = tablero.Tablero[i];
+                    celdas[i].disabled = tablero.idTurno != id;
+
+                }
+
+            }
+
+        }
 
         // Botón reiniciar: vuelve a la pantalla de login
         btnReiniciar.addEventListener('click', () => {
