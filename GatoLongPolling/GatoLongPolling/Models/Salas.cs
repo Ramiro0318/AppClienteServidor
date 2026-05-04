@@ -26,6 +26,7 @@ namespace GatoLongPolling.Models
                 nueva.Numero = SalasDisponibles.Count == 0 ? 1 : SalasDisponibles.Max(x => x.Numero) + 1;
                 nueva.IdJugador1 = id;
                 nueva.NombreJugador1 = nombre;
+                SalasDisponibles.Add(nueva);
                 return nueva;
             }
             else

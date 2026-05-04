@@ -210,7 +210,7 @@
 
 
         async function solicitarSala() {
-            let nombre = localStorage.getItem("nombre", nombre);
+            let nombre = localStorage.getItem("nombre");
             let id = localStorage.getItem("idUsuario")
 
             if (!id) {
@@ -221,7 +221,7 @@
 
             let json = { Nombre: nombre, Id: id };
 
-            let res = await fetch('/gato/registrar', {
+            let res = await fetch("/gato/registrar", {
                 method: "POST",
                 body: JSON.stringify(json),
                 headers: {
