@@ -76,6 +76,37 @@ namespace GatoLongPolling.Services
                 {
                     ServirArchivo(response, "index.html", "text/html");
                 }
+                else if (request.HttpMethod == "GET" && request.RawUrl == "/gato/esperarTurno")
+                {
+                    //onbtener el id
+                    var id = request.QueryString["id"];
+                    if (id == null)
+                    {
+                        response.StatusCode = 400; //bad request
+                        response.Close();
+                    }
+                    else
+                    {
+                        //buscar la sala del jugador
+                        var sala = salas.SolicitarSala(id);
+                        if (sala == null)
+                        {
+                            response.StatusCode = 404; //Not found
+                            response.Close();
+                        }
+                        else
+                        {
+                            while (id != (sala.Gato.Turno == "X" ? sala.IdJugador1 : sala.IdJugador2))
+                            {
+                                Thread.Sleep(500);
+                            }
+                            RegresarTablero(response, sala);
+                        }
+                        //esperar hasta que sea su turno
+                        //regresar el tablero.
+                    }
+
+                }
                 else if (request.HttpMethod == "POST" && request.RawUrl == "/gato/registrar")
                 {
                     byte[] buffer = new byte[request.ContentLength64];

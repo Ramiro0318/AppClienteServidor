@@ -64,9 +64,9 @@
             margin-bottom: 16px;
         }
 
-        .input-field:focus {
-            border-color: #3b82f6;
-        }
+            .input-field:focus {
+                border-color: #3b82f6;
+            }
 
         .btn-primary {
             width: 100%;
@@ -81,9 +81,9 @@
             transition: 0.2s;
         }
 
-        .btn-primary:hover {
-            background: #2563eb;
-        }
+            .btn-primary:hover {
+                background: #2563eb;
+            }
 
         .board {
             display: grid;
@@ -148,15 +148,15 @@
             <div class="title">🎮 Partida</div>
             <div id="infoSala" class="info-box">🟢 Conectando...</div>
             <div id="tablero" class="board">
-                <div class="cell"></div>
-                <div class="cell"></div>
-                <div class="cell"></div>
-                <div class="cell"></div>
-                <div class="cell"></div>
-                <div class="cell"></div>
-                <div class="cell"></div>
-                <div class="cell"></div>
-                <div class="cell"></div>
+                <div class="cell" data-position="1"></div>
+                <div class="cell" data-position="2"></div>
+                <div class="cell" data-position="3"></div>
+                <div class="cell" data-position="4"></div>
+                <div class="cell" data-position="5"></div>
+                <div class="cell" data-position="6"></div>
+                <div class="cell" data-position="7"></div>
+                <div class="cell" data-position="8"></div>
+                <div class="cell" data-position="9"></div>
             </div>
             <div id="estado" class="info-box">⏳ Esperando oponente...</div>
             <button id="btnReiniciar" class="btn-secondary">🔄 Nueva partida</button>
@@ -187,7 +187,7 @@
             // Cambiar a pantalla de juego
             pantallaLogin.classList.add('hidden');
             pantallaJuego.classList.remove('hidden');
-            
+
             // Mostrar mensaje de espera
             infoSala.innerHTML = `👋 Hola ${nombre}`;
             estadoDiv.innerHTML = '⏳ Buscando oponente...';
@@ -199,7 +199,7 @@
             //setTimeout(() => {
             //    estadoDiv.innerHTML = '🎉 ¡Oponente encontrado! Partida iniciada';
             //    infoSala.innerHTML = `Sala #42 · Juegas con X`;
-                
+
             //    // Simular final de partida después de 3 segundos
             //    setTimeout(() => {
             //        estadoDiv.innerHTML = '🏆 ¡Ganaste! Partida terminada';
@@ -212,6 +212,7 @@
         async function solicitarSala() {
             let nombre = localStorage.getItem("nombre");
             let id = localStorage.getItem("idUsuario")
+            document.querySelector("#pantallaJuego .title").textContent += " de " nombre;
 
             if (!id) {
                 id = crypto.randomUUID();
@@ -230,20 +231,71 @@
             });
 
             if (res.ok) {
-                let tablero = await res.json();
-
-                infoSala.innerHTML = tablero.MensajeSuperior;
-                estadoDiv.innerHTML = tablero.MensajeInferior;
-
-                for (var i = 0; i < tablero.Tablero.length; i++) {
-                    celdas[i].innerText = tablero.Tablero[i];
-                    celdas[i].disabled = tablero.idTurno != id;
-
-                }
+                dibujarTablero(res);
 
             }
 
         }
+
+        async function esperar(id) {
+            let response = await fetch("/gato/esperarTurno?id=" + id);
+
+            if (response.ok) {
+                dibujarTablero(response);
+            }
+        }
+
+        async function enviarAlServer(id, pos) {
+            let body = { Id: id, Posicion: pos };
+
+            let response = await fetch("/gato/jugar", {
+                method: "POST",
+                body: JSON.stringify(body),
+                headers {
+                "content-type": "application/json"
+            }
+                    });
+        if (res.ok) {
+            dibujarTablero(res);
+        }
+                }
+
+        function dibujarTablero() {
+            let tablero = await res.json();
+
+            infoSala.innerHTML = tablero.MensajeSuperior;
+            estadoDiv.innerHTML = tablero.MensajeInferior;
+
+            for (var i = 0; i < tablero.Tablero.length; i++) {
+                celdas[i].innerText = tablero.Tablero[i];
+                if (tablero.Terminado) {
+                    celdas[i].disabled = true;
+                }
+                else {
+                    celdas[i].disabled = tablero.idTurno != id;
+                }
+
+            }
+            // Si no es mi turno espero con long polling
+
+            if (tablero.Terminado == false) {
+                esperar(id);
+
+            }
+        }
+
+        document.querySelector(".board").addEventListener("click", function (e) {
+            if (e.target.classList.contains("cell")) {
+
+                if (!e.target.textContent) {
+                    let numero = e.parseInt(e.target.dataset.position);
+
+                    let id = localStorage.getItem("IdUsuario");
+                    enviarAlServer();
+                }
+            }
+
+        });
 
         // Botón reiniciar: vuelve a la pantalla de login
         btnReiniciar.addEventListener('click', () => {
