@@ -76,7 +76,34 @@ namespace GatoLongPolling.Services
                 {
                     ServirArchivo(response, "index.html", "text/html");
                 }
-                else if (request.HttpMethod == "GET" && request.RawUrl == "/gato/esperarTurno")
+                else if (request.HttpMethod == "POST" && request.RawUrl == "/gato/jugar")
+                {
+                    var buffer = new byte[request.ContentLength64];
+                    request.InputStream.ReadExactly(buffer, 0, buffer.Length);
+
+                    var json = Encoding.UTF8.GetString(buffer);
+                    var jugada = JsonSerializer.Deserialize<JugadaDTO>(json);
+
+                    Sala? sala = salas.SolicitarSala(jugada.Id);
+                    
+                    if (sala != null)
+                    {
+                        response.StatusCode = 404;
+                    }
+                    else
+                    {
+                        var simbolo = sala.IdJugador1 == jugada.Id ? "X" : "O";
+                        if (sala.Gato.HacerMovimiento(simbolo, jugada.Posicion)) 
+                        {
+                            RegresarTablero(response, sala);
+                        }
+                        else
+                        {
+                            response.StatusCode = 400;
+                        }
+                    }
+                }
+                else if (request.HttpMethod == "GET" && request.Url.AbsolutePath == "/gato/esperarTurno")
                 {
                     //onbtener el id
                     var id = request.QueryString["id"];
@@ -162,7 +189,7 @@ namespace GatoLongPolling.Services
         {
             TableroDTO tablero = new()
             {
-                IdTurno = sala.Gato.Turno,
+                IdTurno = sala.Gato.Turno == "X" ? sala.IdJugador1 : sala.IdJugador2,
                 Tablero = sala.Gato.Tablero,
                 MensajeSuperior = $"Sala #{sala.Numero}<br>{sala.NombreJugador1} vs {sala.NombreJugador2}",
                 MensajeInferior = $"Turno de {(sala.Gato.Turno == "X" ? sala.NombreJugador1 : sala.NombreJugador2)}",
@@ -174,7 +201,7 @@ namespace GatoLongPolling.Services
             response.ContentLength64 = buffer.Length;
             response.OutputStream.Write(buffer, 0, buffer.Length);
 
-            response.Close();
+            //response.Close();
         }
 
         private void ServirArchivo(HttpListenerResponse response, string nombreArchivo, string contentType)

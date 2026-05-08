@@ -8,7 +8,7 @@ namespace GatoLongPolling.Models
     {
         public List<Sala> SalasDisponibles { get; set; } = new();
 
-        public Sala SolicitarSala(string id) 
+        public Sala? SolicitarSala(string id) 
         {
             var existentes = SalasDisponibles.FirstOrDefault(x => x.IdJugador1 == id || x.IdJugador2 == id);
                 return existentes;
