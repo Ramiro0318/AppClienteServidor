@@ -123,10 +123,15 @@ namespace GatoLongPolling.Services
                         }
                         else
                         {
-                            while (id != (sala.Gato.Turno == "X" ? sala.IdJugador1 : sala.IdJugador2))
+                            while (id != (sala.Gato.Turno == "X" ? sala.IdJugador1 : sala.IdJugador2) || sala.Gato.Terminado == true)
                             {
                                 Thread.Sleep(500);
                             }
+                            if (sala.Gato.Terminado)
+                            {
+                                
+                            }
+                            //// faltaalgo
                             RegresarTablero(response, sala);
                         }
                         //esperar hasta que sea su turno
@@ -187,6 +192,8 @@ namespace GatoLongPolling.Services
 
         private void RegresarTablero(HttpListenerResponse response, Sala sala)
         {
+            lock (response) 
+            {
             TableroDTO tablero = new()
             {
                 IdTurno = sala.Gato.Turno == "X" ? sala.IdJugador1 : sala.IdJugador2,
@@ -195,6 +202,15 @@ namespace GatoLongPolling.Services
                 MensajeInferior = $"Turno de {(sala.Gato.Turno == "X" ? sala.NombreJugador1 : sala.NombreJugador2)}",
             };
 
+            if (sala.Gato.Terminado)
+            {
+                tablero.IdTurno = "";
+                tablero.Terminado = true;
+                tablero.MensajeSuperior = $"sala #{sala.Numero}<br> JUEGO TERMINADO";
+                tablero.MensajeInferior = sala.Gato.Ganador == "Empate" ? "" : $"Los jugadores empataron";
+                sala.Gato.Ganador = sala.Gato.Turno == "x" ? $"{sala.NombreJugador1} HA GANADO" : $"{ sala.NombreJugador2} HA GANADO";
+            }
+
             var json = JsonSerializer.Serialize(tablero);
             byte[] buffer = Encoding.UTF8.GetBytes(json);
             response.ContentType = "application/json";
@@ -202,6 +218,7 @@ namespace GatoLongPolling.Services
             response.OutputStream.Write(buffer, 0, buffer.Length);
 
             //response.Close();
+            }
         }
 
         private void ServirArchivo(HttpListenerResponse response, string nombreArchivo, string contentType)
