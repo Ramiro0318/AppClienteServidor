@@ -23,4 +23,7 @@
     <Project Path="AppSignalR/AppSignalR.csproj" Id="79899815-e312-4e50-93fe-7426af4dbbae" />
     <Project Path="ChatClienteSignalR/ChatClienteSignalR.csproj" Id="be37ac95-edb1-43f7-b94a-90808ceab884" />
   </Folder>
+  <Folder Name="/Unidad3/WebSockets/SnakeSignalR/">
+    <Project Path="SnakeServer/SnakeServer.csproj" Id="6c330305-a98c-42e7-b621-50929926d1b0" />
+  </Folder>
 </Solution>
