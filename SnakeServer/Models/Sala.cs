@@ -4,6 +4,7 @@ namespace SnakeServer.Models
 {
     public class Sala
     {
+        public string Id { get; set; } = "";
         public Tablero Tablero { get; set; } = new();
 
         public string? IdJugador1 { get; set; }
