@@ -22,22 +22,51 @@ document.getElementById("startBtn").addEventListener("click", startGame);
 document.getElementById("backBtn").addEventListener("click", backToMenu);
 document.addEventListener("keydown", handleKeyPress);
 
+
+const connection = new signalR.HubConnectionBuilder().withUrl("/chathub")
+    .configureLogging(signalR.LogLevel.Information).build(); async function start() {
+
+        try { await connection.start(); console.log("SignalR Connected."); }
+        catch (err) { console.log(err); setTimeout(start, 5000); }
+    };
+
+connection.onclose(async () => { await start(); }); // Start the connection.start();
+
+connection.on( ("EsperandoConexion"), () => {
+    let button = document.getElementById("sstartBtn");
+
+    let mensaje = document.createElement("h2");
+    mensaje.classList.add("message");
+    mensaje.textContent = "Esperando conexion ... ";
+
+    document.getElementById("playerName").disabled = true;
+
+    mensaje.insertBefore(button);
+
+    start();
+    //await async
+}); // Start the connection.start();
+
+
+
+
 function startGame() {
     player1Name = document.getElementById("player1Name").value.trim();
-    player2Name = document.getElementById("player2Name").value.trim();
 
-    if (!player1Name) player1Name = "Jugador 1";
-    if (!player2Name) player2Name = "Jugador 2";
+    await connection.Invoke("Conectar", plaerName);
 
-    document.getElementById("menu").style.display = "none";
-    document.getElementById("game").style.display = "block";
+    if (!player1Name) player1Name = "Jugador";
 
-    canvas = document.getElementById("gameCanvas");
-    ctx = canvas.getContext("2d");
 
-    initGame();
-    gameLoop = setInterval(updateGame, 150);
-    gameRunning = true;
+    // document.getElementById("menu").style.display = "none";
+    // document.getElementById("game").style.display = "block";
+
+    // canvas = document.getElementById("gameCanvas");
+    // ctx = canvas.getContext("2d");
+
+    // initGame();
+    // gameLoop = setInterval(updateGame, 150);
+    // gameRunning = true;
 }
 
 function backToMenu() {

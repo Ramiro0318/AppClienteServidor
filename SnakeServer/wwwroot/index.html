@@ -9,15 +9,19 @@
 <body>
     <div class="container">
         <div id="menu" class="menu">
-            <h1>🐍 SNAKE - DOS JUGADORES 🐍</h1>
+            <h1>🐍 SNAKE 🐍</h1>
             <div class="input-group">
                 <label>Jugador 1 (WASD):</label>
                 <input type="text" id="player1Name" placeholder="Nombre Jugador 1" maxlength="20">
             </div>
-            <div class="input-group">
+            <!--<div class="input-group">
                 <label>Jugador 2 (Flechas):</label>
                 <input type="text" id="player2Name" placeholder="Nombre Jugador 2" maxlength="20">
-            </div>
+            </div>-->
+
+            <label class="mensaje"></label>
+
+
             <button id="startBtn" class="btn">▶ INICIAR JUEGO</button>
         </div>
 
@@ -32,6 +36,7 @@
         </div>
     </div>
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/6.0.1/signalr.js"></script>
     <script src="game_local.js"></script>
 </body>
 </html>
