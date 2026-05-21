@@ -9,7 +9,7 @@ builder.Services.AddScoped<SalasService>();
 
 var app = builder.Build();
 
-app.MapHub<GameHub>("/Vivora");
+app.MapHub<GameHub>("/viboraHub");
 app.UseFileServer();    //Es como UseStaticFiles + un ruteo automatico a index.
 
 

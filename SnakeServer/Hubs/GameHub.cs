@@ -26,21 +26,18 @@ namespace SnakeServer.Hubs
                 }
                 else if(sala.IdJugador1 != null && sala.IdJugador2 != null)
                 {
-                    await Clients.Client(sala.IdJugador1).SendAsync("Juego iniciado", sala.NombreJugador2);
 
-                    await Clients.Client(sala.IdJugador2).SendAsync("Juego iniciado", sala.NombreJugador1);
+                    service.IniciarJuego(sala);
 
+                    await Clients.Client(sala.IdJugador1).SendAsync("Juego iniciado", sala.NombreJugador2, sala.Tablero);
 
+                    await Clients.Client(sala.IdJugador2).SendAsync("Juego iniciado", sala.NombreJugador1, sala.Tablero);
 
                     //Iniciar
+
                 }
 
-
-
-
             }
-
-
 
         }
     }
