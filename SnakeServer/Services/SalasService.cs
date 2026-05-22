@@ -78,6 +78,8 @@ namespace SnakeServer.Services
             Timers[sala.Id] = timer;
         }
 
+        public event Action<Sala>? TableroActualizado;
+
         public void MoverSerpiente(Sala sala) 
         {
             var s1 = sala.Tablero.Serpiente1;
@@ -124,8 +126,9 @@ namespace SnakeServer.Services
                     break;
             }
 
-
             //Cheecar colisiones
+
+            TableroActualizado?.Invoke(sala);
         }
 
         public void CrearComida(Sala sala) 

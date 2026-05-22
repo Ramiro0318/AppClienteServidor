@@ -10,6 +10,16 @@ namespace SnakeServer.Hubs
         public GameHub(SalasService service)
         {
             this.service = service;
+            service.TableroActualizado += Service_TableroActualizado;
+        }
+
+        private async void Service_TableroActualizado(Models.Sala sala)
+        {
+            if (sala.IdJugador1 != null && sala.IdJugador1 != null) 
+            {
+                await Clients.Client(sala.IdJugador1).SendAsync("taleroActualizado", sala.Tablero);
+                await Clients.Client(sala.IdJugador1).SendAsync("taleroActualizado", sala.Tablero);
+            }
         }
 
         public async void Conectar(string Nombrejugaor)
