@@ -7,8 +7,8 @@ namespace SnakeServer.Models
     public class Tablero
     {
         public Point Manzana { get; set; }
-        int Ancho = 20;
-        int Largo = 20;
+        public int Ancho { get; set; } = 20;
+        public int Largo { get; set; } = 20;
 
         public List<Point> Serpiente1 { set; get; } = [];
         public List<Point> Serpiente2 { set; get; } = [];
