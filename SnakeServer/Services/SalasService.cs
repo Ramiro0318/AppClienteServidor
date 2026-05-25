@@ -1,17 +1,32 @@
-﻿using SnakeServer.Models;
+﻿using Microsoft.AspNetCore.SignalR;
+using SnakeServer.Hubs;
+using SnakeServer.Models;
 using System.Collections.Concurrent;
 using System.Data.SqlTypes;
 using System.Drawing;
+using System.Security.Principal;
 using System.Xml.Serialization;
 
 namespace SnakeServer.Services
 {
     public class SalasService
     {
+        private readonly IHubContext<GameHub> hub;
+
         public static ConcurrentDictionary<string, Sala> Salas { get; set; } = new ConcurrentDictionary<string, Sala>();
         public static ConcurrentDictionary<string, string> JugadorEspera { get; set; } = new();
-        public static ConcurrentDictionary<string, Timer> Timers { get; set; } = new(); }
+        public static ConcurrentDictionary<string, Timer> Timers { get; set; } = new();
 
+
+        public SalasService(IHubContext<GameHub> hub)
+        {
+            this.hub = hub;
+        }
+
+        public Sala? BuscarSala(string id)
+        {
+            return Salas.FirstOrDefault(x => x.Value.IdJugador1 == id || x.Value.IdJugador2 == id).Value;
+        }
         public Sala? BuscarSala(string id, string nombre)
         {
             if (JugadorEspera.ContainsKey(id))
@@ -44,7 +59,7 @@ namespace SnakeServer.Services
         }
 
 
-        public void IniciarJuego(Sala sala)
+        public async void IniciarJuego(Sala sala)
         {
 
             //sala.Tablero.Serpiente1 = new List<System.Drawing.Point>
@@ -80,7 +95,7 @@ namespace SnakeServer.Services
 
         public event Action<Sala>? TableroActualizado;
 
-        public void MoverSerpiente(Sala sala) 
+        public async void MoverSerpiente(Sala sala)
         {
             var s1 = sala.Tablero.Serpiente1;
             var s2 = sala.Tablero.Serpiente1;
@@ -97,7 +112,7 @@ namespace SnakeServer.Services
                     nuevo.X--;
                     break;
                 case Direccion.Derecha:
-                    nuevo.X ++;
+                    nuevo.X++;
                     break;
                 case Direccion.Arriba:
                     nuevo.Y--;
@@ -108,7 +123,7 @@ namespace SnakeServer.Services
             }
 
             var nuevo2 = new Point(s1[0].X, s1[0].Y);
-            s2.Insert(0, nuevo);
+
 
             switch (sala.Tablero.Direccion2)
             {
@@ -125,28 +140,107 @@ namespace SnakeServer.Services
                     nuevo2.Y++;
                     break;
             }
+            s2.Insert(0, nuevo);
+
+            await hub.Clients.Client(sala.IdJugador1).SendAsync("taleroActualizado", sala.Tablero);
+            await hub.Clients.Client(sala.IdJugador1).SendAsync("taleroActualizado", sala.Tablero);
+
 
             //Cheecar colisiones
 
-            TableroActualizado?.Invoke(sala);
+
+
         }
 
-        public void CrearComida(Sala sala) 
+        public void CrearComida(Sala sala)
         {
             //Si no hay espacios, fin de juego
-            if (sala.Tablero.Ancho + sala.Tablero.Largo == sala.Tablero.Serpiente1.Count +sala.Tablero.Serpiente2.Count)
+            if (sala.Tablero.Ancho + sala.Tablero.Largo == sala.Tablero.Serpiente1.Count + sala.Tablero.Serpiente2.Count)
             {
                 //fin juego
             }
             //Si hay espacios asignar al azar
             Random r = new();
             var point = 0;
-            do
-            {
-                point = new Point(r.Next(sala.Tablero.Ancho), r.Next(sala.Tablero.Largo));
-            } while (sala.Tablero.Serpiente1.Any(x => x.X == point.x && x.Point.Y) ||);
+            //do
+            //{
+            //    //point = new Point(r.Next(sala.Tablero.Ancho), r.Next(sala.Tablero.Largo));
+            //} while (sala.Tablero.Serpiente1.Any(x => x.X == Point. && x.Y == x.Point.Y));
         }
 
+        public void CambiarDireccion(Sala sala, string id, Direccion nueva)
+        {
+            if (sala.IdJugador1 == id)
+            {
+                var actual = sala.Tablero.Direccion1;
 
+                switch (nueva)
+                {
+                    case Direccion.Izquierda:
+                        if (actual != Direccion.Derecha)
+                        {
+                            sala.Tablero.Direccion1 = nueva;
+                        }
+                        break;
+
+                    case Direccion.Arriba:
+                        if (actual != Direccion.Abajo)
+                        {
+                            sala.Tablero.Direccion1 = nueva;
+                        }
+                        break;
+
+                    case Direccion.Abajo:
+                        if (actual != Direccion.Arriba)
+                        {
+                            sala.Tablero.Direccion1 = nueva;
+                        }
+                        break;
+
+                    case Direccion.Derecha:
+                        if (actual != Direccion.Izquierda)
+                        {
+                            sala.Tablero.Direccion1 = nueva;
+                        }
+                        break;
+
+                }
+            }
+            else
+            {
+                var actual = sala.Tablero.Direccion2;
+
+                switch (nueva)
+                {
+                    case Direccion.Izquierda:
+                        if (actual != Direccion.Derecha)
+                        {
+                            sala.Tablero.Direccion1 = nueva;
+                        }
+                        break;
+
+                    case Direccion.Arriba:
+                        if (actual != Direccion.Abajo)
+                        {
+                            sala.Tablero.Direccion1 = nueva;
+                        }
+                        break;
+
+                    case Direccion.Abajo:
+                        if (actual != Direccion.Arriba)
+                        {
+                            sala.Tablero.Direccion1 = nueva;
+                        }
+                        break;
+
+                    case Direccion.Derecha:
+                        if (actual != Direccion.Izquierda)
+                        {
+                            sala.Tablero.Direccion1 = nueva;
+                        }
+                        break;
+                }
+
+            }
+        }
     }
-}
