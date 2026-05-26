@@ -113,7 +113,13 @@ connection.on("JuegoIniciado", (nomJugador2, tablero) => {
     canvas = document.getElementById("gameCanvas");
     ctx = canvas.getContext("2d");
     drawGame(tablero);
-})
+});
+
+
+connection.on("JugadorPerdio", (nombre) => {
+    endGame(nombre);
+
+});
 
 async function startGame() {
 
@@ -144,9 +150,7 @@ function backToMenu() {
 
     if (gameLoop) {
 
-        clearInterval(gameLoop);
-
-        gameLoop = null;
+        location.reload();
 
     }
 

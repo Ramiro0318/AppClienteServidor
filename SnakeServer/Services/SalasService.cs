@@ -86,7 +86,7 @@ namespace SnakeServer.Services
             {
 
                 MoverSerpiente(sala);
-            }, null, 100, 900
+            }, null, 100, 200
             );
             CrearComida(sala);
 
@@ -100,12 +100,7 @@ namespace SnakeServer.Services
             var s1 = sala.Tablero.Serpiente1;
             var s2 = sala.Tablero.Serpiente1;
 
-            s1.RemoveAt(s1.Count - 1);
-            s2.RemoveAt(s2.Count - 1);
-
             var nuevo = new Point(s1[0].X, s1[0].Y);
-            s1.Insert(0, nuevo);
-
             switch (sala.Tablero.Direccion1)
             {
                 case Direccion.Izquierda:
@@ -140,15 +135,84 @@ namespace SnakeServer.Services
                     nuevo2.Y++;
                     break;
             }
-            s2.Insert(0, nuevo);
 
-            await hub.Clients.Client(sala.IdJugador1).SendAsync("taleroActualizado", sala.Tablero);
-            await hub.Clients.Client(sala.IdJugador1).SendAsync("taleroActualizado", sala.Tablero);
+            
+
 
 
             //Cheecar colisiones
+            //Colision contra pared
+            if (nuevo.X < 0 || nuevo.Y < 0 || nuevo.X > sala.Tablero.Ancho || nuevo.Y > sala.Tablero.Largo)
+            {
+                sala.Tablero.Terminado = true;
+                await hub.Clients.Clients([sala.IdJugador1 ?? "", sala.IdJugador2 ?? ""]).SendAsync("JugadorPerdio", sala.NombreJugador1);
+            }
+
+            if (nuevo.X < 0 || nuevo.Y < 0 || nuevo.X > sala.Tablero.Ancho || nuevo.Y > sala.Tablero.Largo)
+            {
+                sala.Tablero.Terminado = true;
+                await hub.Clients.Clients([sala.IdJugador1 ?? "", sala.IdJugador2 ?? ""]).SendAsync("JugadorPerdio", sala.NombreJugador2);
+
+            }
+
+            //Colision contra oponente
+            //Colision contra ti mismo
+            if (s1.Contains(nuevo) || s2.Contains(nuevo))
+            {
+                sala.Tablero.Terminado = true;
+                await hub.Clients.Clients([sala.IdJugador1 ?? "", sala.IdJugador2 ?? ""]).SendAsync("JugadorPerdio", sala.NombreJugador1);
+            }
+
+            if (s1.Contains(nuevo2) || s2.Contains(nuevo2))
+            {
+                sala.Tablero.Terminado = true;
+                await hub.Clients.Clients([sala.IdJugador1 ?? "", sala.IdJugador2 ?? ""]).SendAsync("JugadorPerdio", sala.NombreJugador1);
+            }
 
 
+            //colision contra comida
+            if (sala.Tablero.Manzana == nuevo)
+            {
+                sala.Tablero.Puntos1 ++;
+                CrearComida(sala);
+            }
+
+            if (sala.Tablero.Manzana == nuevo2)
+            {
+                sala.Tablero.Puntos2++;
+                CrearComida(sala);
+            }
+
+
+            s1.Insert(0, nuevo);
+            s2.Insert(0, nuevo);
+
+            if (s1.Count >= 3 + sala.Tablero.Puntos1)
+            {
+                s1.RemoveAt(s1.Count - 1);
+            }
+
+            if (s1.Count >= 3 + sala.Tablero.Puntos1)
+            {
+                s1.RemoveAt(s2.Count - 1);
+            }
+
+
+            if (!sala.Tablero.Terminado)
+            {
+
+                await hub.Clients.Client(sala.IdJugador1).SendAsync("taleroActualizado", sala.Tablero);
+                await hub.Clients.Client(sala.IdJugador1).SendAsync("taleroActualizado", sala.Tablero);
+            }
+            else
+            {
+                Timers[sala.Id].Dispose();
+                Timers.TryRemove(sala.Id, out Timer? t);
+                Salas.TryRemove(sala.Id, out Sala? s);
+
+            }
+
+            
 
         }
 
